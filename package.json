@@ -1,0 +1,28 @@
+{
+  "name": "klyng",
+  "version": "0.1.0",
+  "description": "A message-passing distributed computing framework for node.js",
+  "bin": "bin/main.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --recursive ./tests/specs"
+  },
+  "author": {
+    "name": "Mostafa Samir",
+    "email": "mostafa.3210@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["distributed", "message-passing", "parallel"],
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/Mostafa-Samir/klyng.git"
+  },
+  "dependencies": {
+    "command-line-args": "^2.1.4",
+    "fibers": "^1.0.9",
+    "node-ipc": "^6.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
