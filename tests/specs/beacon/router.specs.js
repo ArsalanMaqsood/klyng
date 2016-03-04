@@ -48,7 +48,7 @@ describe('Beacon\'s Router', function() {
     });
 
     it('routes a monitor message correctly to a remote beacon', function(done) {
-        var fake_parent = spawn('node', ['./tests/fixtures/beacon/fake-remote-parent.js']);
+        var fake_parent = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
         var fake_parent_stdout = "";
         fake_parent.stdout.on('data', function(chunck) { fake_parent_stdout += chunck.toString().trim(); });
 
@@ -88,7 +88,7 @@ describe('Beacon\'s Router', function() {
     });
 
     it('routes a message correctly to a remote beacon', function(done) {
-        var fake_beacon = spawn('node', ['./tests/fixtures/beacon/fake-remote-parent.js']);
+        var fake_beacon = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
         var fake_beacon_stdout = "";
         fake_beacon.stdout.on('data', function(chunck){ fake_beacon_stdout += chunck.toString().trim(); });
 
