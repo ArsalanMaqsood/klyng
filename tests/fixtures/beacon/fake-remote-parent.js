@@ -8,6 +8,12 @@ ipc.serveNet('127.0.0.1', 4895, function() {
         socket.destroy();
         ipc.server.stop();
     });
+
+    ipc.server.on('KLYNG:MSG', function(msg, socket) {
+        console.log(msg.data);
+        socket.destroy();
+        ipc.server.stop();
+    })
 });
 
 ipc.server.start();
