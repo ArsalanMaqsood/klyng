@@ -47,6 +47,29 @@ describe('Beacon\'s Router', function() {
         })
     });
 
+    it('routes a message correctly to a remote parent', function(done) {
+        var fake_parent = spawn('node', ['./tests/fixtures/beacon/fake-remote-parent.js']);
+        var fake_parent_stdout = "";
+        fake_parent.stdout.on('data', function(chunck) { fake_parent_stdout += chunck.toString().trim(); });
+
+        // clear router from past test and set metadata to refer to a tcp parent
+        router.clear();
+        router.setMetaTable({parent: "127.0.0.1:4895"});
+
+        ipc.connectToNet('remote_parent', '127.0.0.1', 4895, function() {
+            router.setMonitorSocket(ipc.of.remote_parent);
+
+            router.routeToParent({type: 'process:exit', data: {line: "Hello remote from router"}});
+
+            ipc.of.remote_parent.socket.on('end', function() { ipc.disconnect('remote_parent'); });
+        });
+
+        fake_parent.on('exit', function() {
+            expect(fake_parent_stdout).to.equal("Hello remote from router");
+            done();
+        });
+    })
+
     it('rouets a message correctly to local job instance', function(done) {
         var fake_instance = spawn('node', ['./tests/fixtures/beacon/router-local-process.js'], {stdio: [null, null, null, 'ipc']});
         var fake_instance_stdout = "";
