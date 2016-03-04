@@ -90,13 +90,13 @@ describe('Beacon\'s Router', function() {
     it('routes a message correctly to a remote beacon', function(done) {
         var fake_beacon = spawn('node', ['./tests/fixtures/beacon/fake-remote-parent.js']);
         var fake_beacon_stdout = "";
-        fake_beacon.stdout.on('data', function(chunck){ fake_beacon += chunck.toString().trim(); });
+        fake_beacon.stdout.on('data', function(chunck){ fake_beacon_stdout += chunck.toString().trim(); });
 
         router.clear();
         router.setMetaTable({ proc0: '127.0.0.1:4895' });
 
         ipc.connectToNet('remote_beacon', '127.0.0.1', 4895, function() {
-            router.setRemoteChannel("sock_127.0.0.1:4895", ipc.of.remote_beacon);
+            router.setRemoteChannel("127.0.0.1:4895", ipc.of.remote_beacon);
 
             router.routeTo(0, {data: "Hello remote from router"});
 
