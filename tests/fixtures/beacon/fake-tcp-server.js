@@ -1,4 +1,5 @@
 var ipc = require('node-ipc');
+var crypto = require('crypto');
 
 ipc.config.silent = true;
 
@@ -19,6 +20,17 @@ ipc.serveNet('127.0.0.1', 4895, function() {
         socket.destroy();
         ipc.server.stop();
     });
+
+    ipc.server.on('KEY-EXT:PARAMS', function(data, socket) {
+        var dhObj = crypto.createDiffieHellman(data.prime, 'base64');
+        var publicKey = dhObj.generateKeys('base64');
+
+        var sharedSecret = dhObj.computeSecret(data.key, 'base64', 'base64');
+
+        console.log(sharedSecret);
+
+        ipc.server.emit(socket, 'KEY-EXT:PUBLIC', {key: publicKey});
+    })
 });
 
 ipc.server.start();
