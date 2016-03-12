@@ -10,17 +10,23 @@ describe("Beacon Remote Communincation", function() {
 
         var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
 
-        tcp.connectTo('127.0.0.1', 4895)
-        .then(function(connection) {
-            expect(!!connection).to.equal(true);
-            expect(connection.socket.destroyed).to.equal(false);
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            expect(connection.socket.destroyed).to.equal(true);
+        setTimeout(function() {
+            tcp.connectTo('127.0.0.1', 4895)
+            .then(function(connection) {
+                expect(!!connection).to.equal(true);
+                expect(connection.socket.destroyed).to.equal(false);
+                tcp.disconnectFrom('127.0.0.1', 4895);
+                expect(connection.socket.destroyed).to.equal(true);
 
-            fake_server.kill();
-            done();
-        })
-        .catch(done);
+                fake_server.kill();
+                done();
+            })
+            .catch(function(err) {
+                tcp.disconnectFrom('127.0.0.1', 4895);
+                fake_server.kill();
+                done(err);
+            });
+        }, 1000);
     });
 
     it('fails to connect to non-existing tcp server', function(done) {
@@ -30,7 +36,10 @@ describe("Beacon Remote Communincation", function() {
             expect(connection).to.equal(false);
             done();
         })
-        .catch(done);
+        .catch(function(err) {
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            done(err);
+        });
     });
 
     it('exchanges a shared secret key with tcp server', function(done) {
