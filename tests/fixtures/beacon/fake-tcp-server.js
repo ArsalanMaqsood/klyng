@@ -1,5 +1,6 @@
 var ipc = require('node-ipc');
 var crypto = require('crypto');
+var utils = require('../../../lib/utils');
 
 ipc.config.silent = true;
 
@@ -37,10 +38,8 @@ ipc.serveNet('127.0.0.1', 4895, function() {
     });
 
     ipc.server.on('AUTH', function(data, socket) {
-        var decipher = crypto.createDecipher('aes-256-ctr', secret);
-        var decrypted = '' + decipher.update(data.payload, 'base64', 'utf8') + decipher.final('utf8');
-
-        ipc.server.emit(socket, 'AUTH:STATUS', {status: decrypted === password});
+        var decrypted = utils.verify(data, secret);
+        ipc.server.emit(socket, 'AUTH:STATUS', {status: decrypted.data === password});
     });
 });
 
