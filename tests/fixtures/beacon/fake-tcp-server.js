@@ -26,10 +26,10 @@ ipc.serveNet('127.0.0.1', 4895, function() {
     });
 
     ipc.server.on('KEY-EXT:PARAMS', function(data, socket) {
-        var dhObj = crypto.createDiffieHellman(data.prime, 'base64');
-        var publicKey = dhObj.generateKeys('base64');
+        var dhObj = utils.diffieHellman(data.prime);
+        var publicKey = dhObj.publicKey;
 
-        var sharedSecret = dhObj.computeSecret(data.key, 'base64', 'base64');
+        var sharedSecret = dhObj.computeSecret(data.key);
         secret = sharedSecret;
 
         console.log(sharedSecret);
