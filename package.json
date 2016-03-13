@@ -11,15 +11,20 @@
     "email": "mostafa.3210@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["distributed", "message-passing", "parallel"],
+  "keywords": [
+    "distributed",
+    "message-passing",
+    "parallel"
+  ],
   "repository": {
-      "type": "git",
-      "url": "https://github.com/Mostafa-Samir/klyng.git"
+    "type": "git",
+    "url": "https://github.com/Mostafa-Samir/klyng.git"
   },
   "dependencies": {
     "command-line-args": "^2.1.4",
     "fibers": "^1.0.9",
-    "node-ipc": "^6.0.0"
+    "node-ipc": "^6.0.0",
+    "zip-local": "^0.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
