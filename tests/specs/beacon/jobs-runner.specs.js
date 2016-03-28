@@ -3,6 +3,7 @@ var router = require('../../../lib/router.js');
 var runner = require('../../../lib/jobs-runner.js');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
+var zipper = require('zip-local');
 
 // FAKE: ipc socket server
 ipc.config.silent = true;
@@ -54,6 +55,23 @@ describe('Beacon\'s Jobs Runner', function() {
                 done();
             });
         });
+    });
+
+    it('packs an app correctly', function() {
+        var descriptor = runner.pack({app: './tests/fixtures/beacon/fake_app/main.js'});
+
+        expect(descriptor.entry).to.equal('main.js');
+
+        var packg = zipper.sync.unzip(new Buffer(descriptor.data, "base64")).memory();
+        var packg_contents = packg.contents();
+
+        expect(packg_contents.length).to.equal(3);
+        expect(packg_contents).to.include('main.js');
+        expect(packg.read('main.js', 'text')).to.equal("var klyng = require('klyng');\n");
+        expect(packg_contents).to.include('_modules/_fiber.js');
+        expect(packg.read('_modules/_fiber.js', 'text')).to.equal('Fiber!\n');
+        expect(packg_contents).to.include('_modules/_klyng.js');
+        expect(packg.read('_modules/_klyng.js', 'text')).to.equal('Klyng!\n');
     });
 
 });
