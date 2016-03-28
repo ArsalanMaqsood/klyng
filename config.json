@@ -1,0 +1,6 @@
+{
+    "port": 2222,
+    "PasswordAuth": true,
+    "passwd": "d34ul2",
+    "overload": true
+}
