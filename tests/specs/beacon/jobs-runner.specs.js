@@ -3,7 +3,10 @@ var router = require('../../../lib/router.js');
 var runner = require('../../../lib/jobs-runner.js');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
+var fs = require('fs');
+var path = require('path');
 var zipper = require('zip-local');
+var rmrf = require('rimraf');
 
 // FAKE: ipc socket server
 ipc.config.silent = true;
@@ -12,11 +15,15 @@ ipc.config.retry = 1500;
 
 describe('Beacon\'s Jobs Runner', function() {
 
-    before(function() {
+    before(function(done) {
         ipc.serve(function(){
             ipc.server.on('message', function(msg) {});
         });
         ipc.server.start();
+
+        rmrf('.unpacks', function(err) {
+            done();
+        });
     });
 
     after(function() {
@@ -72,6 +79,22 @@ describe('Beacon\'s Jobs Runner', function() {
         expect(packg.read('_modules/_fiber.js', 'text')).to.equal('Fiber!\n');
         expect(packg_contents).to.include('_modules/_klyng.js');
         expect(packg.read('_modules/_klyng.js', 'text')).to.equal('Klyng!\n');
+    });
+
+    it('unpacks an app correctly', function(done) {
+        runner.unpack({
+            entry: "main.js",
+            data: fs.readFileSync("./tests/fixtures/beacon/fake_app.zip", {encoding: "base64"})
+        })
+        .then(function(app) {
+            var parsed = path.parse(app);
+            expect(parsed.base).to.equal("main.js");
+            expect(fs.readFileSync(app, {encoding: "utf8"})).to.equal("var klyng = require('klyng');\n");
+            expect(fs.readFileSync(parsed.dir + "/_modules/_fiber.js", {encoding: "utf8"})).to.equal('Fiber!\n');
+            expect(fs.readFileSync(parsed.dir + "/_modules/_klyng.js", {encoding: "utf8"})).to.equal('Klyng!\n');
+            done();
+        })
+        .catch(done);
     });
 
 });
