@@ -136,4 +136,20 @@ describe('Beacon\'s Jobs Runner', function() {
         expect(plan["192.168.0.58@2222"].count).to.equal(8);
     });
 
+    it('divides a job over given hosts correctly (overallocation)', function() {
+        var fake_job = {
+            hosts: {
+                "local": 2,
+                "192.168.0.100@2222:": 1,
+                "192.168.0.58@2222:": 3
+            },
+            size: 9
+        };
+
+        var plan = runner.divide(fake_job);
+        expect(plan.local.count).to.equal(3);
+        expect(plan["192.168.0.100@2222"].count).to.equal(2);
+        expect(plan["192.168.0.58@2222"].count).to.equal(4);
+    });
+
 });
