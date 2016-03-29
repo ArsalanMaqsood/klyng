@@ -97,7 +97,7 @@ describe('Beacon\'s Jobs Runner', function() {
         .catch(done);
     });
 
-    it('divides a job over given hosts correctly', function() {
+    it('divides a job over given hosts correctly (perfect dist, no infinity host)', function() {
         var fake_job = {
             hosts: {
                 "local": 2,
@@ -108,12 +108,15 @@ describe('Beacon\'s Jobs Runner', function() {
         };
 
         var plan = runner.divide(fake_job);
-        expect(plan[0].location).to.equal("local");
-        expect(plan[0].count).to.equal(2);
-        expect(plan[2].location).to.equal("192.168.0.58@2222");
-        expect(plan[2].count).to.equal(4);
-        expect(plan[6].location).to.equal("192.168.0.1000@2222");
-        expect(plan[6].count).to.equal(5);
+        expect(plan.local).to.exist;
+        expect(plan.local.count).to.equal(2);
+        expect(plan.local.start).to.equal(0);
+        expect(plan["192.168.0.100@2222"]).to.exist;
+        expect(plan["192.168.0.100@2222"].start).to.equal(2);
+        expect(plan["192.168.0.100@2222"].count).to.equal(5);
+        expect(plan["192.168.0.58@2222"]).to.exist;
+        expect(plan["192.168.0.58@2222"].start).to.equal(7);
+        expect(plan["192.168.0.58@2222"].count).to.equal(4);
     });
 
 });
