@@ -74,11 +74,11 @@ describe('Beacon\'s Jobs Runner', function() {
 
         expect(packg_contents.length).to.equal(3);
         expect(packg_contents).to.include('main.js');
-        expect(packg.read('main.js', 'text')).to.equal("var klyng = require('klyng');\n");
+        expect(packg.read('main.js', 'text').trim()).to.equal("var klyng = require('klyng');");
         expect(packg_contents).to.include('_modules/_fiber.js');
-        expect(packg.read('_modules/_fiber.js', 'text')).to.equal('Fiber!\n');
+        expect(packg.read('_modules/_fiber.js', 'text').trim()).to.equal('Fiber!');
         expect(packg_contents).to.include('_modules/_klyng.js');
-        expect(packg.read('_modules/_klyng.js', 'text')).to.equal('Klyng!\n');
+        expect(packg.read('_modules/_klyng.js', 'text').trim()).to.equal('Klyng!');
     });
 
     it('unpacks an app correctly', function(done) {
@@ -89,9 +89,9 @@ describe('Beacon\'s Jobs Runner', function() {
         .then(function(app) {
             var parsed = path.parse(app);
             expect(parsed.base).to.equal("main.js");
-            expect(fs.readFileSync(app, {encoding: "utf8"})).to.equal("var klyng = require('klyng');\n");
-            expect(fs.readFileSync(parsed.dir + "/_modules/_fiber.js", {encoding: "utf8"})).to.equal('Fiber!\n');
-            expect(fs.readFileSync(parsed.dir + "/_modules/_klyng.js", {encoding: "utf8"})).to.equal('Klyng!\n');
+            expect(fs.readFileSync(app, {encoding: "utf8"}).trim()).to.equal("var klyng = require('klyng');");
+            expect(fs.readFileSync(parsed.dir + "/_modules/_fiber.js", {encoding: "utf8"}).trim()).to.equal('Fiber!');
+            expect(fs.readFileSync(parsed.dir + "/_modules/_klyng.js", {encoding: "utf8"}).trim()).to.equal('Klyng!');
             done();
         })
         .catch(done);
