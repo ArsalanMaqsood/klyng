@@ -79,8 +79,8 @@ describe("Beacon Remote Communincation", function() {
         .then(function(params) {
             return tcp.authOver(params.connection, params.secret, 'a1b2c3d4');
         })
-        .then(function(status) {
-            expect(status).to.equal(true);
+        .then(function(params) {
+            expect(params.status).to.equal(true);
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
             done();
@@ -106,8 +106,8 @@ describe("Beacon Remote Communincation", function() {
         .then(function(params) {
             return tcp.authOver(params.connection, params.secret, '12345678');
         })
-        .then(function(status) {
-            expect(status).to.equal(false);
+        .then(function(params) {
+            expect(params.status).to.equal(false);
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
             done();
