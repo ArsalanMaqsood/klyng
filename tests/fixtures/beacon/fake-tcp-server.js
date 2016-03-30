@@ -41,6 +41,23 @@ ipc.serveNet('127.0.0.1', 4895, function() {
         var decrypted = utils.verify(data, secret);
         ipc.server.emit(socket, 'AUTH:STATUS', {status: decrypted.data === password});
     });
+
+    ipc.server.on('KLYNG:JOB', function(data, socket) {
+        var decrypted = utils.verify(data, secret);
+        var ack = {status: false};
+        if(!!decrypted) {
+            var correctEntry = (decrypted.data.entry === "main.js");
+            var correctData = (decrypted.data.data === "packed.app");
+            var correctSize = (decrypted.data.size === 11);
+            var correctParent = (decrypted.data.plan.parent.count === 5);
+            var correctTarget = (decrypted.data.plan.target.count === 4);
+            var correctOther = (decrypted.data.plan["127.0.0.2@2222"].count === 2);
+
+            ack.status = correctEntry && correctData && correctSize && correctParent && correctTarget && correctOther;
+        }
+
+        ipc.server.emit(socket, 'JOB:ACK', ack);
+    })
 });
 
 ipc.server.start();

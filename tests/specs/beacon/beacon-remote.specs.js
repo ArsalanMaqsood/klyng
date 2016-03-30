@@ -119,4 +119,44 @@ describe("Beacon Remote Communincation", function() {
         });
     });
 
+    it('sends a job to a remote beacon', function(done) {
+        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+
+        tcp.connectTo('127.0.0.1', 4895)
+        .then(function(connection) {
+            console.log(connection);
+            return tcp.exchangeKeyOver(connection);
+        })
+        .then(function(params) {
+            return tcp.authOver(params.connection, params.secret, 'a1b2c3d4');
+        })
+        .then(function(params) {
+            var job = {
+                entry: 'main.js',
+                data: 'packed.app',
+                size: 11,
+                plan: {
+                    "local": {count: 5, start: 0},
+                    "127.0.0.1@4895": {count: 4, start: 5},
+                    "127.0.0.2@2222": {count: 2, start: 9}
+                }
+            };
+
+            return tcp.sendJobOver(params.connection, params.secret, job);
+        })
+        .then(function(sent) {
+            if(sent) {
+                done();
+            }
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            fake_server.kill();
+            done();
+        })
+        .catch(function(err) {
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            fake_server.kill();
+            done(err);
+        });
+    });
+
 });
