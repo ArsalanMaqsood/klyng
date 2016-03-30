@@ -58,10 +58,10 @@ describe("Beacon Remote Communincation", function() {
             fake_server.kill();
             done();
         })
-        .catch(function() {
+        .catch(function(err) {
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
-            done();
+            done(err);
         });
     });
 
@@ -85,10 +85,10 @@ describe("Beacon Remote Communincation", function() {
             fake_server.kill();
             done();
         })
-        .catch(function() {
+        .catch(function(err) {
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
-            done();
+            done(err);
         });
     });
 
@@ -112,10 +112,10 @@ describe("Beacon Remote Communincation", function() {
             fake_server.kill();
             done();
         })
-        .catch(function() {
+        .catch(function(err) {
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
-            done();
+            done(err);
         });
     });
 
