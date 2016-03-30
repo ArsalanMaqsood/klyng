@@ -8,6 +8,7 @@ describe('CLI Controller', function() {
 
         var hosts = cli.parseHosts(__dirname + "/../../fixtures/cli/fake-hosts.valid.json");
 
+        expect(hosts.error).to.not.exist;
         expect(hosts.local).to.equal(2);
         expect(hosts["192.168.0.10@2222:"]).to.equal(Infinity);
         expect(hosts["192.168.0.2@4578:"]).to.equal(3);
