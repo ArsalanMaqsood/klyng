@@ -44,7 +44,7 @@ ipc.serveNet('127.0.0.1', 4895, function() {
 
     ipc.server.on('KLYNG:JOB', function(data, socket) {
         var decrypted = utils.verify(data, secret);
-        var ack = {status: false};
+        var ack = {status: false, error: "REMOTE: BAD JOB"};
         if(!!decrypted) {
             var correctEntry = (decrypted.data.entry === "main.js");
             var correctData = (decrypted.data.data === "packed.app");
@@ -54,6 +54,12 @@ ipc.serveNet('127.0.0.1', 4895, function() {
             var correctOther = (decrypted.data.plan["127.0.0.2@2222"].count === 2);
 
             ack.status = correctEntry && correctData && correctSize && correctParent && correctLocal && correctOther;
+            if(!ack.status) {
+                ack.error = "REMOTE: ASSERTION FAILED";
+            }
+            else {
+                delete ack["error"];
+            }
         }
 
         ipc.server.emit(socket, 'JOB:ACK', ack);

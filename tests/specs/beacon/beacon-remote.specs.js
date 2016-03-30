@@ -124,7 +124,6 @@ describe("Beacon Remote Communincation", function() {
 
         tcp.connectTo('127.0.0.1', 4895)
         .then(function(connection) {
-            console.log(connection);
             return tcp.exchangeKeyOver(connection);
         })
         .then(function(params) {
@@ -146,11 +145,10 @@ describe("Beacon Remote Communincation", function() {
         })
         .then(function(sent) {
             if(sent) {
+                tcp.disconnectFrom('127.0.0.1', 4895);
+                fake_server.kill();
                 done();
             }
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
-            done();
         })
         .catch(function(err) {
             tcp.disconnectFrom('127.0.0.1', 4895);
