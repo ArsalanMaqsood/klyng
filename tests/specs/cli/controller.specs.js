@@ -12,7 +12,7 @@ describe('CLI Controller', function() {
         expect(hosts["192.168.0.10@2222:"]).to.equal(Infinity);
         expect(hosts["192.168.0.2@4578:"]).to.equal(3);
         expect(hosts["192.168.0.103@2222:h3llo"]).to.equal(5);
-        expect(hosts["192.168.0.20@5986:olleh"]).to.equal(1);
+        expect(hosts["192.168.0.20@5986:oll3h"]).to.equal(1);
 
     })
 })
