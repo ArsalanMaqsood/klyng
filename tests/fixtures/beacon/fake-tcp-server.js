@@ -50,10 +50,10 @@ ipc.serveNet('127.0.0.1', 4895, function() {
             var correctData = (decrypted.data.data === "packed.app");
             var correctSize = (decrypted.data.size === 11);
             var correctParent = (decrypted.data.plan.parent.count === 5);
-            var correctTarget = (decrypted.data.plan.target.count === 4);
+            var correctLocal = (decrypted.data.plan.local.count === 4);
             var correctOther = (decrypted.data.plan["127.0.0.2@2222"].count === 2);
 
-            ack.status = correctEntry && correctData && correctSize && correctParent && correctTarget && correctOther;
+            ack.status = correctEntry && correctData && correctSize && correctParent && correctLocal && correctOther;
         }
 
         ipc.server.emit(socket, 'JOB:ACK', ack);
