@@ -2,6 +2,8 @@ var tcp = require('../../../lib/tcp');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
 
+var configs = require('../../../lib/beacon-configs');
+
 describe("Beacon Remote Communincation", function() {
 
     this.timeout(5000);
