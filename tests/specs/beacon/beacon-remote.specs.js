@@ -6,7 +6,7 @@ var configs = require('../../../lib/beacon-configs');
 
 describe("Beacon Remote Communincation", function() {
 
-    this.timeout(5000);
+    this.timeout(7000);
 
     it('connects/disconnects to/from a running tcp server', function(done) {
 
