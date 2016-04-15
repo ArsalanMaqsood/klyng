@@ -19,7 +19,7 @@ describe("Beacon Remote Communincation", function() {
                 expect(connection.socket.destroyed).to.equal(true);
 
                 fake_server.kill();
-                done();
+                setTimeout(done, 1000);
             })
             .catch(function(err) {
                 tcp.disconnectFrom('127.0.0.1', 4895);
@@ -33,12 +33,12 @@ describe("Beacon Remote Communincation", function() {
 
         tcp.connectTo('127.0.0.1', 4895)
         .then(function(connection) {
-            expect(connection).to.equal(false);
-            done();
+            expect(!!connection).to.equal(true);
+            done(new Error("This should never happen"));
         })
         .catch(function(err) {
             tcp.disconnectFrom('127.0.0.1', 4895);
-            done(err);
+            done();
         });
     });
 
