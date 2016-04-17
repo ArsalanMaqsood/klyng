@@ -1,1 +1,4 @@
-var klyng = require('klyng');
+var fiber = require('fibers');
+var localDep = require('./local-dep')
+
+console.log(!!fiber.yield ? "endency": "?!");
