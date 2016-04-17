@@ -15,6 +15,8 @@ ipc.config.retry = 1500;
 
 describe('Beacon\'s Jobs Runner', function() {
 
+    var globals = {};
+
     before(function(done) {
         ipc.serve(function(){
             ipc.server.on('message', function(msg) {});
@@ -64,35 +66,39 @@ describe('Beacon\'s Jobs Runner', function() {
         });
     });
 
-    it('packs an app correctly', function() {
-        var descriptor = runner.pack({app: './tests/fixtures/beacon/fake_app/main.js'});
+    it('packs an app correctly', function(done) {
+        runner.pack({app: './tests/fixtures/beacon/fake_app/main.js'})
+        .then(function(app) {
+            var packg = zipper.sync.unzip(new Buffer(app.pckg, "base64")).memory();
+            var packg_contents = packg.contents();
+            expect(packg_contents.length).to.equal(1);
+            expect(packg_contents).to.include('app_' + app.id +'.js');
 
-        expect(descriptor.entry).to.equal('main.js');
+            // save data for the next test
+            globals.id = app.id;
+            fs.writeFileSync("./tests/fixtures/beacon/fake_app.zip", app.pckg, "base64");
 
-        var packg = zipper.sync.unzip(new Buffer(descriptor.data, "base64")).memory();
-        var packg_contents = packg.contents();
-
-        expect(packg_contents.length).to.equal(3);
-        expect(packg_contents).to.include('main.js');
-        expect(packg.read('main.js', 'text').trim()).to.equal("var klyng = require('klyng');");
-        expect(packg_contents).to.include('_modules/_fiber.js');
-        expect(packg.read('_modules/_fiber.js', 'text').trim()).to.equal('Fiber!');
-        expect(packg_contents).to.include('_modules/_klyng.js');
-        expect(packg.read('_modules/_klyng.js', 'text').trim()).to.equal('Klyng!');
+            done();
+        })
+        .catch(done);
     });
 
     it('unpacks an app correctly', function(done) {
         runner.unpack({
-            entry: "main.js",
-            data: fs.readFileSync("./tests/fixtures/beacon/fake_app.zip", {encoding: "base64"})
+            id: globals.id,
+            pckg: fs.readFileSync("./tests/fixtures/beacon/fake_app.zip", {encoding: "base64"})
         })
         .then(function(app) {
-            var parsed = path.parse(app);
-            expect(parsed.base).to.equal("main.js");
-            expect(fs.readFileSync(app, {encoding: "utf8"}).trim()).to.equal("var klyng = require('klyng');");
-            expect(fs.readFileSync(parsed.dir + "/_modules/_fiber.js", {encoding: "utf8"}).trim()).to.equal('Fiber!');
-            expect(fs.readFileSync(parsed.dir + "/_modules/_klyng.js", {encoding: "utf8"}).trim()).to.equal('Klyng!');
-            done();
+            var unpacked_app = spawn('node', [app]);
+            var unpacked_app_stdout = "";
+            unpacked_app.stdout.on('data', function(chunck) {
+                unpacked_app_stdout += chunck.toString().trim();
+            });
+
+            unpacked_app.on('exit', function() {
+                expect(unpacked_app_stdout).to.equal("Local Dependency");
+                done();
+            })
         })
         .catch(done);
     });
