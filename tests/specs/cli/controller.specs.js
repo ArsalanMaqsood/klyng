@@ -9,11 +9,15 @@ describe('CLI Controller', function() {
         var hosts = cli.parseHosts(__dirname + "/../../fixtures/cli/fake-hosts.valid.json");
 
         expect(hosts.error).to.not.exist;
-        expect(hosts.local).to.equal(2);
-        expect(hosts["192.168.0.10@2222:"]).to.equal(Infinity);
-        expect(hosts["192.168.0.2@4578:"]).to.equal(3);
-        expect(hosts["192.168.0.103@2222:h3llo"]).to.equal(5);
-        expect(hosts["192.168.0.20@5986:oll3h"]).to.equal(1);
+        expect(hosts.local.max_procs).to.equal(2);
+        expect(hosts["192.168.0.10:2222"].max_procs).to.equal(Infinity);
+        expect(hosts["192.168.0.10:2222"].password).to.equal("");
+        expect(hosts["192.168.0.2:4578"].max_procs).to.equal(3);
+        expect(hosts["192.168.0.2:4578"].password).to.equal("");
+        expect(hosts["192.168.0.103:2222"].max_procs).to.equal(5);
+        expect(hosts["192.168.0.103:2222"].password).to.equal("h3llo");
+        expect(hosts["192.168.0.20:5986"].max_procs).to.equal(1);
+        expect(hosts["192.168.0.20:5986"].password).to.equal("oll3h");
 
     });
 
