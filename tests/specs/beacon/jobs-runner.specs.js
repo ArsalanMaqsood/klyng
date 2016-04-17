@@ -101,9 +101,9 @@ describe('Beacon\'s Jobs Runner', function() {
         // perfect dist means that job.size <= sum of hosts max processes
         var fake_job = {
             hosts: {
-                "local": 2,
-                "192.168.0.100@2222:": 5,
-                "192.168.0.58@2222:": 4
+                "local": {max_procs: 2},
+                "192.168.0.100:2222": {max_procs: 5, password: ""},
+                "192.168.0.58:2222": {max_procs: 4, password: ""}
             },
             size: 11
         };
@@ -112,44 +112,44 @@ describe('Beacon\'s Jobs Runner', function() {
         expect(plan.local).to.exist;
         expect(plan.local.count).to.equal(2);
         expect(plan.local.start).to.equal(0);
-        expect(plan["192.168.0.100@2222"]).to.exist;
-        expect(plan["192.168.0.100@2222"].start).to.equal(2);
-        expect(plan["192.168.0.100@2222"].count).to.equal(5);
-        expect(plan["192.168.0.58@2222"]).to.exist;
-        expect(plan["192.168.0.58@2222"].start).to.equal(7);
-        expect(plan["192.168.0.58@2222"].count).to.equal(4);
+        expect(plan["192.168.0.100:2222"]).to.exist;
+        expect(plan["192.168.0.100:2222"].start).to.equal(2);
+        expect(plan["192.168.0.100:2222"].count).to.equal(5);
+        expect(plan["192.168.0.58:2222"]).to.exist;
+        expect(plan["192.168.0.58:2222"].start).to.equal(7);
+        expect(plan["192.168.0.58:2222"].count).to.equal(4);
     });
 
     it('divides a job over given hosts correctly (perfect dist, infinity host)', function() {
         var fake_job = {
             hosts: {
-                "local": 2,
-                "192.168.0.100@2222:": 1,
-                "192.168.0.58@2222:": Infinity
+                "local": {max_procs: 2},
+                "192.168.0.100:2222": {max_procs: 1, password: ""},
+                "192.168.0.58:2222": {max_procs: Infinity, password: ""}
             },
             size: 11
         };
 
         var plan = runner.divide(fake_job);
         expect(plan.local.count).to.equal(2);
-        expect(plan["192.168.0.100@2222"].count).to.equal(1);
-        expect(plan["192.168.0.58@2222"].count).to.equal(8);
+        expect(plan["192.168.0.100:2222"].count).to.equal(1);
+        expect(plan["192.168.0.58:2222"].count).to.equal(8);
     });
 
     it('divides a job over given hosts correctly (overallocation)', function() {
         var fake_job = {
             hosts: {
-                "local": 2,
-                "192.168.0.100@2222:": 1,
-                "192.168.0.58@2222:": 3
+                "local": {max_procs: 2},
+                "192.168.0.100:2222": {max_procs: 1, password: ""},
+                "192.168.0.58:2222": {max_procs: 3, password: ""}
             },
             size: 9
         };
 
         var plan = runner.divide(fake_job);
         expect(plan.local.count).to.equal(3);
-        expect(plan["192.168.0.100@2222"].count).to.equal(2);
-        expect(plan["192.168.0.58@2222"].count).to.equal(4);
+        expect(plan["192.168.0.100:2222"].count).to.equal(2);
+        expect(plan["192.168.0.58:2222"].count).to.equal(4);
     });
 
 });
