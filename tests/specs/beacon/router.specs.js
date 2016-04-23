@@ -27,6 +27,25 @@ describe('Beacon\'s Router', function() {
         expect(table.parent).to.equal('local');
     });
 
+    it('builds a meta routing table from a given plan', function() {
+
+        var plan = {
+            local: { count: 2, start: 0 },
+            '192.168.0.100:2222': { count: 2, start: 2 },
+            '192.168.0.58:2222': { count: 1, start: 4 }
+        };
+
+        var table = router.buildTableFromPlan(plan);
+
+        expect(table.parent).to.equal('local');
+        expect(table['proc0']).to.equal('local');
+        expect(table['proc1']).to.equal('local');
+        expect(table['proc2']).to.equal('192.168.0.100:2222');
+        expect(table['proc3']).to.equal('192.168.0.100:2222');
+        expect(table['proc4']).to.equal('192.168.0.58:2222');
+
+    });
+
     it('routes a message correctly to local parent', function(done) {
         var fake_client = spawn('node', ['./tests/fixtures/beacon/router-ipc-client.js']);
         var fake_client_stdout = "";
