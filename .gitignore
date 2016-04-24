@@ -31,3 +31,9 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# klyng's unpacks directory
+.unpacks
+
+# fake_app.zip asset as it changes every test run
+tests/fixtures/beacon/fake_app.zip
