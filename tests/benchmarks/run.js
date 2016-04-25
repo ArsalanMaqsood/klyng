@@ -75,7 +75,7 @@ var tasks = [
     {
         name: "Pi Approximation",
         alias: "pi",
-        description: "Approximates pi with Leibniz formula up to 5e9"
+        description: "Approximates pi with using arctan integral formula"
     }
 ];
 

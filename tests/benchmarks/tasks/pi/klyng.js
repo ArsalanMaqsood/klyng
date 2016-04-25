@@ -2,16 +2,12 @@ var klyng = require('./../../../../index');
 
 function approx_pi(from, to) {
     var pi = 0;
-
-    for(var i = from; i < to; i++) {
-        if((i + 1) % 2 == 0)
-            pi += 1 / (2 * i - 1);
-        else
-            pi -= 1 / (2 * i - 1);
+    var dx  = 0.0000000005;
+    for(var x = from; x < to; x += dx) {
+        pi += 4 / (1 + x * x);
     }
-    pi *= 4;
 
-    return pi;
+    return pi * dx;
 }
 
 function main() {
@@ -23,16 +19,16 @@ function main() {
 
         var start = Date.now();
 
-        var batch_size = 5000000000 / size;
+        var interval_size = 1 / size;
 
         // distribute the range over the other processes
         for(var proc = 1; proc < size; proc++) {
-            var range = [proc * batch_size, (proc + 1) * batch_size];
+            var range = [proc * interval_size, (proc + 1) * interval_size];
             klyng.send({to: proc, data: range});
         }
 
         // process own's range
-        var local_pi = approx_pi(1, batch_size);
+        var local_pi = approx_pi(0, interval_size);
 
         // wait for the others
         for(var proc = 1; proc < size; proc++) {
