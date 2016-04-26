@@ -2,7 +2,7 @@ var klyng = require('./../../../../index');
 
 function approx_pi(from, to) {
     var pi = 0;
-    var dx  = 0.0000000005;
+    var dx  = 0.000000002;
     for(var x = from; x < to; x += dx) {
         pi += 4 / (1 + x * x);
     }
@@ -16,8 +16,6 @@ function main() {
     var rank = klyng.rank();
 
     if(rank === 0) {
-
-        var start = Date.now();
 
         var interval_size = 1 / size;
 
@@ -35,10 +33,6 @@ function main() {
             var other_pi = klyng.recv();
             local_pi += other_pi;
         }
-
-        var end = Date.now();
-
-        console.log("Time: " + (end - start) / 1000 + " seconds");
     }
     else {
         var range = klyng.recv({from: 0});
