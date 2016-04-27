@@ -15,6 +15,19 @@ var params = cmdargs([
         name: "iterations",
         type: Number,
         defaultValue: 100
+    },
+
+    {
+        name: "tasks",
+        type: String,
+        multiple: true,
+        defaultValue: tasks.map(function(task) { return task.alias; })
+    },
+
+    {
+        name: "no-mpi",
+        type: Boolean,
+        defaultValue: false
     }
 ]);
 
@@ -22,6 +35,7 @@ var args = params.parse();
 
 var pcounts = args['process-counts'];
 var iterations = args['iterations'];
+var executed_tasks = args['tasks'];
 
 /*
  * checks if mpi binaries {mpicc, mpiexec/mpirun} exist on the system
@@ -82,39 +96,41 @@ console.log("");
 
 var frameworks = ['MPI', 'klyng'];
 
-var runmpi = true;
+var runmpi = !args['no-mpi'];
 var mpirunner = "";
 
-process.stdout.write("Checking MPI Binaries ...");
-var mpicheck = checkmpi();
-if(mpicheck.exits) {
-    process.stdout.write(" Found!\n".green);
-    mpirunner = mpicheck.runner;
-    report_progress("Compiling MPI Files:", 0, tasks.length);
+if(!args['no-mpi']) {
+    process.stdout.write("Checking MPI Binaries ...");
+    var mpicheck = checkmpi();
+    if(mpicheck.exits) {
+        process.stdout.write(" Found!\n".green);
+        mpirunner = mpicheck.runner;
+        report_progress("Compiling MPI Files:", 0, tasks.length);
 
-    for(var i = 0; i < tasks.length; ++i) {
-        var task_dir = __dirname + '/tasks/' + tasks[i].alias;
-        var compilation = compile(task_dir);
+        for(var i = 0; i < tasks.length; ++i) {
+            var task_dir = __dirname + '/tasks/' + tasks[i].alias;
+            var compilation = compile(task_dir);
 
-        if(compilation.success) {
-            report_progress("Compiling MPI Files:", i + 1, tasks.length);
-        }
-        else {
-            console.log("\nError.".red.bold);
-            console.log(compilation.error.italic);
-            runmpi = false;
+            if(compilation.success) {
+                report_progress("Compiling MPI Files:", i + 1, tasks.length);
+            }
+            else {
+                console.log("\nError.".red.bold);
+                console.log(compilation.error.italic);
+                runmpi = false;
 
-            break;
+                break;
+            }
         }
     }
-}
-else {
-    process.stdout.write(" Not Found!\n".red);
-    process.stdout.write("Skipping MPI Compilation".yellow);
-    runmpi = false;
-}
+    else {
+        process.stdout.write(" Not Found!\n".red);
+        process.stdout.write("Skipping MPI Compilation".yellow);
+        runmpi = false;
+    }
 
-process.stdout.write("\n");
+    process.stdout.write("\n");
+}
 
 process.stdout.write("Retarting klyng's Beacon ...");
 var status = spawn("node", [__dirname + "/../../bin/main.js", '-d']);
@@ -132,6 +148,10 @@ process.stdout.write("\n");
 
 for(var i = 0 ; i < tasks.length ; ++i) {
     var task = tasks[i];
+    
+    if(executed_tasks.indexOf(task.alias) === -1) {
+        continue;
+    }
 
     console.log(("Task: " + task.name).red.bold);
     console.log(task.description);
