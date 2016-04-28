@@ -28,6 +28,13 @@ var params = cmdargs([
         name: "no-mpi",
         type: Boolean,
         defaultValue: false
+    },
+
+    {
+        name: "metrics",
+        type: String,
+        multiple: true,
+        defaultValue: ['rtet', 'mpct']
     }
 ]);
 
@@ -35,7 +42,8 @@ var args = params.parse();
 
 var pcounts = args['process-counts'];
 var iterations = args['iterations'];
-var executed_tasks = args['tasks'];
+var executed_tasks = args['tasks'].map(function(task) { return task.toLowerCase(); });
+args['metrics'] = args['metrics'].map(function(metric) { return metric.toLowerCase(); });
 
 /*
  * checks if mpi binaries {mpicc, mpiexec/mpirun} exist on the system
@@ -89,6 +97,29 @@ function report_progress(msg, done, size) {
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
     process.stdout.write(msg + " " + done + "/" + size);
+}
+
+/*
+ * gets the max cpu time of all n process as reported on processes stdout
+ * @param stdout {String}: string represntation of the runner stdout
+ * @param n {Number}: the number of processes
+ * @return {Number}: the max of all cpu times
+ */
+function getmaxcputime(stdout, n) {
+    var regex = /cputime:([0-9.]*)/;
+    var max_cputime = -1;
+
+    for(var p = 0; p < n; ++p) {
+        var parsed = regex.exec(stdout);
+        if(parsed === null) {
+            return -1;
+        }
+
+        var pcputime = parseFloat(parsed[1]);
+        max_cputime = (pcputime > max_cputime) ? pcputime: max_cputime;
+    }
+
+    return max_cputime;
 }
 
 console.log("Klyng v0.1.0 Benchmarks".cyan.bold);
@@ -148,7 +179,9 @@ process.stdout.write("\n");
 
 for(var i = 0 ; i < tasks.length ; ++i) {
     var task = tasks[i];
-    
+    var mpct_parse_error = false;
+    var reported_metrics = args['metrics'].slice(0, args['metrics'].length);
+
     if(executed_tasks.indexOf(task.alias) === -1) {
         continue;
     }
@@ -158,6 +191,7 @@ for(var i = 0 ; i < tasks.length ; ++i) {
     console.log("");
 
     var baseline = {MPI : 0, klyng: 0};
+    var i_baseline = {MPI: 0, klyng: 0};
 
     for(var j = 0 ; j < pcounts.length; ++j) {
 
@@ -177,47 +211,78 @@ for(var i = 0 ; i < tasks.length ; ++i) {
             var task_path = __dirname + "/tasks/" + task.alias;
             task_path += (framework === "klyng") ? "/klyng.js" : "/mpi.out";
 
-            var min = Infinity;
-            var max = -1;
-            var avg = 0;
+            var min = Infinity, i_min = Infinity;
+            var max = -1, i_max = -1;
+            var avg = 0, i_avg = 0;
 
             for(var itr = 0; itr < iterations; itr++) {
-                report_progress("    " + (framework + ": ").bold + "Iteration", itr + 1, iterations);
+                report_progress("    " + (framework + ":").bold.underline + " Iteration", itr + 1, iterations);
 
+                var output;
                 var start = process.hrtime();
                 if(framework === "MPI") {
-                    var output = spawn(runner, ['-n', np, task_path]);
+                    output = spawn(runner, ['-n', np, task_path]);
                 }
                 else {
-                    var output = spawn('node', [runner, '-n', np, task_path]);
+                    output = spawn('node', [runner, '-n', np, task_path]);
                 }
                 var diff = process.hrtime(start);
 
                 var duration = diff[0] + diff[1] * 1e-9;
-
                 min = (duration <= min) ? duration : min;
                 max = (duration >= max) ? duration : max;
                 avg += duration;
+
+                var i_duration = getmaxcputime(output.stdout.toString(), np);
+                if(i_duration === -1) {
+                    var mpct_index = reported_metrics.indexOf('mpct');
+                    if(mpct_index !== -1) {
+                        mpct_parse_error = true;
+                        reported_metrics.splice(mpct_index, 1);
+                    }
+                }
+                i_min = (i_duration <= i_min) ? i_duration : i_min;
+                i_max = (i_duration >= i_max) ? i_duration : i_max;
+                i_avg += i_duration;
             }
 
             avg /= iterations;
+            i_avg /= iterations;
 
             var report = "min = " + min.toFixed(3) + "s, max = " + max.toFixed(3) + "s, avg = " + avg.toFixed(3) + "s";
+            var i_report = "min = " + i_min.toFixed(3) + "s, max = " + i_max.toFixed(3) + "s, avg = " + i_avg.toFixed(3) + "s";
 
             if(np === pcounts[0]) {
                 baseline[framework]  = avg;
+                i_baseline[framework] = i_avg;
             }
             else {
                 var speedup = (baseline[framework] - avg) * 100 / baseline[framework];
+                var i_speedup = (i_baseline[framework] - i_avg) * 100 / i_baseline[framework];
+
                 var speedup_str = speedup.toFixed(3) + "%";
+                var i_speedup_str = i_speedup.toFixed(3) + "%";
+
                 speedup_str = (speedup > 0) ? ("+" + speedup_str).green : (speedup_str).red;
+                i_speedup_str = (i_speedup > 0) ? ("+" + i_speedup_str).green : (i_speedup_str).red;
 
                 report += " (" + speedup_str + ")";
+                i_report += " (" + i_speedup_str + ")";
             }
+
+            var compined_report = (reported_metrics.indexOf('rtet') !== -1) ? "\n      RTET: ".gray.bold + report : "";
+            compined_report += (reported_metrics.indexOf('mpct') !== -1) ? "\n      MPCT: ".green.bold + i_report: "";
 
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
-            console.log("    " + (framework + ": ").bold + report);
+            console.log("    " + (framework + ":").bold.underline + compined_report);
         }
+    }
+
+    if(mpct_parse_error) {
+        console.log("\nMPCT Report Skipped due to Error in Parsing CPU times.\n".bold.red);
+    }
+    else {
+        console.log("");
     }
 }
