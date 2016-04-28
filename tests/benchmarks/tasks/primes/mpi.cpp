@@ -1,5 +1,6 @@
 #include <mpi.h>
 #include <cstdio>
+#include "../../utilis/cputime.h"
 
 bool isprime(int number) {
     if(number == 2) { return true;}
@@ -27,7 +28,10 @@ int main(int argc, char* argv[]) {
     int max = 10000000;
 
     int counter = 0;
-    for(int num = rank + 1; num <= max; num += size) {
+    int start = rank * (max / size);
+    int end = (rank + 1) * (max/ size);
+
+    for(int num = start; num < end; ++num) {
         if(isprime(num)) { ++counter; }
     }
 
@@ -44,6 +48,8 @@ int main(int argc, char* argv[]) {
 
         printf("%d\n", counter);
     }
+
+    printf("cputime:%.3f\n", getcputime());
 
     MPI_Finalize();
     return 0;

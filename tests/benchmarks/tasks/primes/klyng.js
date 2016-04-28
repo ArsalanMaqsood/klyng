@@ -1,4 +1,5 @@
 var klyng = require('./../../../../index');
+var getrusage = require('getrusage');
 
 function isprime(number) {
     if(number === 2) { return true;}
@@ -22,7 +23,10 @@ function main() {
     var max = 10000000;
 
     var counter = 0;
-    for(var num = rank + 1; num <= max; num += size) {
+    var start = rank * (max / size);
+    var end = (rank + 1) * (max/ size);
+
+    for(var num = start; num < end; ++num) {
         if(isprime(num)) { ++counter; }
     }
 
@@ -37,6 +41,8 @@ function main() {
 
         console.log(counter);
     }
+
+    console.log("cputime:%s", getrusage.getcputime().toFixed(3));
 
     klyng.end();
 
