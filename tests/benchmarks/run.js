@@ -1,7 +1,13 @@
 var colors = require('colors');
+var os = require('os').platform();
 var spawn = require('child_process').spawnSync;
 var cmdargs = require('command-line-args');
 var tasks = require('./tasks');
+
+if(os === "win32") {
+    console.error("Sorry, Windows is not supported for now!".bold.red);
+    prcocess.exit();
+}
 
 var params = cmdargs([
     {
@@ -146,8 +152,8 @@ if(!args['no-mpi']) {
                 report_progress("Compiling MPI Files:", i + 1, tasks.length);
             }
             else {
-                console.log("\nError.".red.bold);
-                console.log(compilation.error.italic);
+                console.error("\nError.".red.bold);
+                console.error(compilation.error.italic);
                 runmpi = false;
 
                 break;
@@ -170,8 +176,8 @@ if(!status.err && !status.stderr.length) {
     process.stdout.write(" Done!\n".green);
 }
 else {
-    process.stdout.write(" Error!\n".red);
-    console.log(status.stderr.toString().italic);
+    process.stderr.write(" Error!\n".red);
+    console.error(status.stderr.toString().italic);
     process.exit();
 }
 
@@ -280,7 +286,7 @@ for(var i = 0 ; i < tasks.length ; ++i) {
     }
 
     if(mpct_parse_error) {
-        console.log("\nMPCT Report Skipped due to Error in Parsing CPU times.\n".bold.red);
+        console.error("\nMPCT Report Skipped due to Error in Parsing CPU times.\n".bold.red);
     }
     else {
         console.log("");
