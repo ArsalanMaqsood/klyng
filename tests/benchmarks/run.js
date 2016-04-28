@@ -5,7 +5,7 @@ var cmdargs = require('command-line-args');
 var tasks = require('./tasks');
 
 if(os === "win32") {
-    console.error("Sorry, Windows is not supported for now!".bold.red);
+    console.error("Sorry, Benchmarking on Windows is not supported for now!".bold.red);
     prcocess.exit();
 }
 
