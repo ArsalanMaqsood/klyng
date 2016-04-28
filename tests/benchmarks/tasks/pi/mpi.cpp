@@ -1,6 +1,7 @@
 #include <mpi.h>
 #include <ctime>
 #include <cstdio>
+#include "../../utilis/cputime.h"
 
 double approx_pi(double from, double to) {
     double pi = 0.0;
@@ -48,6 +49,8 @@ int main(int argc, char* argv[]) {
         double local_pi = approx_pi(range[0], range[1]);
         MPI_Send(&local_pi, 1, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD);
     }
+
+    printf("cputime:%.3f\n", getcputime());
 
     MPI_Finalize();
     return 0;

@@ -1,4 +1,5 @@
 var klyng = require('./../../../../index');
+var getrusage = require('getrusage');
 
 function approx_pi(from, to) {
     var pi = 0;
@@ -39,6 +40,8 @@ function main() {
         var local_pi = approx_pi(range[0], range[1]);
         klyng.send({to: 0, data: local_pi});
     }
+
+    console.log("cputime:%s", getrusage.getcputime().toFixed(3));
 
     klyng.end();
 }
