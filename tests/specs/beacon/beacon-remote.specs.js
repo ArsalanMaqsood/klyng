@@ -1,12 +1,23 @@
 var tcp = require('../../../lib/tcp');
+var utilis = require('../../../lib/utils');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
+var ipc = require('node-ipc');
 
 var configs = require('../../../lib/beacon-configs');
+
+configs.configureRemoteIPC(ipc);
 
 describe("Beacon Remote Communincation", function() {
 
     this.timeout(7000);
+
+    before(function() {tcp.start(7777);});
+    after(function() {
+        ipc.disconnect('auth_socket');
+        ipc.disconnect('nauth_socket');
+        tcp.stop();
+    });
 
     it('connects/disconnects to/from a running tcp server', function(done) {
 
@@ -156,6 +167,24 @@ describe("Beacon Remote Communincation", function() {
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
             done(err);
+        });
+    });
+
+    it('server responds to KEY-EXT:PARAMS message and a shared secret is created', function(done) {
+        ipc.connectToNet('auth_socket', '127.0.0', 7777, function() {
+            var dhObj = utilis.diffieHellman();
+            ipc.of.auth_socket.emit('KLYNG:EXT', {
+                prime: dhObj.prime,
+                key: dhObj.publicKey
+            });
+
+            ipc.of.auth_socket.on('KEY-EXT:PUBLIC', function(data) {
+                ipc.of.auth_socket.klyng_secret = dhObj.computeSecret(data.key);
+                var welcomeMsg = utilis.verify(data.cipherWelcome, ipc.of.auth_socket.klyng_secret);
+
+                expect(welcomeMsg).to.equal("Hello from Beacon's TCP Server!");
+                done();
+            })
         });
     });
 
