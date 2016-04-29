@@ -12,7 +12,7 @@ describe("Beacon Remote Communincation", function() {
 
     this.timeout(7000);
 
-    before(function() {tcp.start(7777);});
+    before(function() {tcp.start({port: 7777, PasswordAuth: true, password: "dummy"});});
     after(function() {
         ipc.disconnect('auth_socket');
         ipc.disconnect('nauth_socket');
@@ -187,5 +187,9 @@ describe("Beacon Remote Communincation", function() {
             })
         });
     });
+
+    it('responds to AUTH messages with an incorrect password', function(done) {
+
+    })
 
 });
