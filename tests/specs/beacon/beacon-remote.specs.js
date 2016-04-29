@@ -12,7 +12,7 @@ describe("Beacon Remote Communincation", function() {
 
     this.timeout(7000);
 
-    before(function() {tcp.start({port: 7777, PasswordAuth: true, password: "dummy"});});
+    before(function() {tcp.start({port: 7777, password: "dummy"});});
     after(function() {
         ipc.disconnect('auth_socket');
         ipc.disconnect('nauth_socket');
