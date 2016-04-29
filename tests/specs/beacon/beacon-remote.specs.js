@@ -19,6 +19,16 @@ describe("Beacon Remote Communincation", function() {
         tcp.stop();
     });
 
+    beforeEach(function() {
+        if(!!ipc.of.auth_socket) {
+            ipc.of.auth_socket.off('AUTH:STATUS');
+        }
+
+        if(!!ipc.of.nauth_socket) {
+            ipc.of.nauth_socket.off('AUTH:STATUS');
+        }
+    });
+
     it('connects/disconnects to/from a running tcp server', function(done) {
 
         var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
@@ -202,7 +212,7 @@ describe("Beacon Remote Communincation", function() {
         var secret = ipc.of.auth_socket.klyng_secret;
         ipc.of.auth_socket.emit('AUTH', utilis.secure({data: "dummy"}, secret));
         ipc.of.auth_socket.on('AUTH:STATUS', function(data) {
-            expect(data.status).to.be.false;
+            expect(data.status).to.be.true;
             done();
         });
     });
