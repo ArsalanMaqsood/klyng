@@ -49,7 +49,7 @@ ipc.serveNet('127.0.0.1', 4895, function() {
             var correctId = (decrypted.data.id === 1);
             var correctData = (decrypted.data.pckg === "packed.app");
             var correctSize = (decrypted.data.size === 11);
-            var correctParent = (decrypted.data.plan.parent.count === 5);
+            var correctParent = (decrypted.data.plan["parent:7777"].count === 5);
             var correctLocal = (decrypted.data.plan.local.count === 4);
             var correctOther = (decrypted.data.plan["127.0.0.2:2222"].count === 2);
 
