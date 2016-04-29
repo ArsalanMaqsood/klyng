@@ -1,5 +1,6 @@
 var tcp = require('../../../lib/tcp');
 var utilis = require('../../../lib/utils');
+var jobman = require('../../../lib/jobs-runner');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
 var ipc = require('node-ipc');
@@ -215,5 +216,52 @@ describe("Beacon Remote Communincation", function() {
             expect(data.status).to.be.true;
             done();
         });
+    });
+
+    it('responds to KLYNG:JOB message and runs the job', function(done) {
+        var secret = ipc.of.auth_socket.klyng_secret;
+        var job = {
+            app: __dirname + '/../../fixtures/beacon/fake_functional_app/main.js',
+            size: 2,
+            plan: {
+                "parent:9876": {start: 0, count: 1},
+                "local": {start: 1, count: 1}
+            }
+        }
+
+        var klyngMsgPromise = new Promise(function(resolve, reject) {
+            ipc.serveNet('127.0.0.1', 9876, function() {
+                ipc.server.on('KLYNG:MSG', function(msg, socket) {
+                    try {
+                        expect(msg.header.from).to.equal(1);
+                        expect(msg.header.to).to.equal(0);
+                        expect(msg.data).to.equal("Weee!");
+                        resolve();
+                    }
+                    catch(err) { reject(err); }
+                });
+            });
+            ipc.server.start();
+        });
+
+        var jobAckPromise = jobman.pack(job)
+        .then(function(app) {
+            return new Promise(function(resolve, reject) {
+                job.app = app;
+                ipc.of.auth_socket.emit('KLYNG:JOB', utilis.secure({data: job}, secret));
+                ipc.of.auth_socket.on('JOB:ACK', function(data) {
+                    if(!data.status) {
+                        reject(new Error(data.error));
+                    }
+                    else {
+                        resolve(true);
+                    }
+                });
+            });
+        });
+
+        Promise.all([klyngMsgPromise, jobAckPromise])
+        .then(function() { done(); })
+        .catch(done);
     });
 });
