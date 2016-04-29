@@ -188,8 +188,21 @@ describe("Beacon Remote Communincation", function() {
         });
     });
 
-    it('responds to AUTH messages with an incorrect password', function(done) {
+    it('responds to AUTH message with an incorrect password', function(done) {
+        var secret = ipc.of.auth_socket.klyng_secret;
+        ipc.of.auth_socket.emit('AUTH', utilis.secure({data: "12345"}, secret));
+        ipc.of.auth_socket.on('AUTH:STATUS', function(data) {
+            expect(data.status).to.be.false;
+            done();
+        });
+    });
 
-    })
-
+    it('responds to AUTH message with a correct password', function(done) {
+        var secret = ipc.of.auth_socket.klyng_secret;
+        ipc.of.auth_socket.emit('AUTH', utilis.secure({data: "dummy"}, secret));
+        ipc.of.auth_socket.on('AUTH:STATUS', function(data) {
+            expect(data.status).to.be.false;
+            done();
+        });
+    });
 });
