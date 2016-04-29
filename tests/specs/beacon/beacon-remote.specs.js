@@ -154,14 +154,14 @@ describe("Beacon Remote Communincation", function() {
         })
         .then(function(params) {
             var job = {
-                entry: 'main.js',
-                data: 'packed.app',
+                id: 1,
+                pckg: 'packed.app',
                 size: 11,
             };
             var plan = {
                 "local": {count: 5, start: 0},
-                "127.0.0.1@4895": {count: 4, start: 5},
-                "127.0.0.2@2222": {count: 2, start: 9}
+                "127.0.0.1:4895": {count: 4, start: 5},
+                "127.0.0.2:2222": {count: 2, start: 9}
             };
 
             return tcp.sendJobOver(params.connection, params.secret, job, plan);
