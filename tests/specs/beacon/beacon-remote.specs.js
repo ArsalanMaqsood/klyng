@@ -193,6 +193,7 @@ describe("Beacon Remote Communincation", function() {
         ipc.of.auth_socket.emit('AUTH', utilis.secure({data: "12345"}, secret));
         ipc.of.auth_socket.on('AUTH:STATUS', function(data) {
             expect(data.status).to.be.false;
+            expect(data.error).to.equal("incorrect password");
             done();
         });
     });
