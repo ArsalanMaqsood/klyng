@@ -173,7 +173,7 @@ describe("Beacon Remote Communincation", function() {
     it('server responds to KEY-EXT:PARAMS message and a shared secret is created', function(done) {
         ipc.connectToNet('auth_socket', '127.0.0', 7777, function() {
             var dhObj = utilis.diffieHellman();
-            ipc.of.auth_socket.emit('KLYNG:EXT', {
+            ipc.of.auth_socket.emit('KEY-EXT:PARAMS', {
                 prime: dhObj.prime,
                 key: dhObj.publicKey
             });
