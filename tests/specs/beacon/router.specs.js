@@ -35,7 +35,7 @@ describe('Beacon\'s Router', function() {
             '192.168.0.58:2222': { count: 1, start: 4 }
         };
 
-        var table = router.buildTableFromPlan(plan);
+        var table = router.buildTableFromPlan(plan, true);
 
         expect(table.parent).to.equal('local');
         expect(table['proc0']).to.equal('local');
