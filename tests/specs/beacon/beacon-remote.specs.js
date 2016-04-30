@@ -224,7 +224,7 @@ describe("Beacon Remote Communincation", function() {
             app: __dirname + '/../../fixtures/beacon/fake_functional_app/main.js',
             size: 2,
             plan: {
-                "parent:9876": {start: 0, count: 1},
+                "parent": {port: 9876, start: 0, count: 1},
                 "local": {start: 1, count: 1}
             }
         }
