@@ -264,4 +264,13 @@ describe("Beacon Remote Communincation", function() {
         .then(function() { done(); })
         .catch(done);
     });
+
+    it('responds to KLYNG:JOB with indicating that the beacon is busy', function(done) {
+        ipc.of.auth_socket.emit('KLYNG:JOB', {});
+        ipc.of.auth_socket.on('JOB:ACK', function(data) {
+            expect(data.status).to.be.false;
+            expect(data.error).to.equal("The Beacon is busy");
+            done();
+        });
+    });
 });
