@@ -276,7 +276,7 @@ describe("Beacon Remote Communincation", function() {
     });
 
     it('responds to DONE message', function(done) {
-        ipc.of.auth_socket.emit('DONE', {});
+        ipc.of.auth_socket.emit('SIGNAL:DONE', {});
 
         var disconnectPromise = new Promise(function(resolve, reject) {
             ipc.server.on('close', function(socket) {
