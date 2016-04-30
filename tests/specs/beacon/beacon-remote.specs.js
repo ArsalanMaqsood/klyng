@@ -273,4 +273,30 @@ describe("Beacon Remote Communincation", function() {
             done();
         });
     });
+
+    it('responds to DONE message', function(done) {
+        ipc.of.auth_socket.emit('DONE', {});
+
+        var disconnectPromise = new Promise(function(resolve, reject) {
+            ipc.server.on('close', function(socket) {
+                try {
+                    expect(socket.remoteAddress).to.equal('127.0.0.1');
+                }
+                catch(error) { reject(error); }
+                resolve();
+            });
+        });
+
+        var endPromise = new Promise(function(resolve, reject) {
+            ipc.of.auth_socket.socket.on('end', function() {
+                resolve();
+            });
+        });
+
+        Promise.all([disconnectPromise, endPromise])
+        .then(function() {
+            done();
+        })
+        .catch(done);
+    });
 });
