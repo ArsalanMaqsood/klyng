@@ -265,7 +265,7 @@ describe("Beacon Remote Communincation", function() {
         .catch(done);
     });
 
-    it('responds to KLYNG:JOB with indicating that the beacon is busy', function(done) {
+    it('responds to KLYNG:JOB indicating that the beacon is busy', function(done) {
         ipc.of.auth_socket.emit('KLYNG:JOB', {});
         ipc.of.auth_socket.on('JOB:ACK', function(data) {
             expect(data.status).to.be.false;
