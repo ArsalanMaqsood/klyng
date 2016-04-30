@@ -275,7 +275,7 @@ describe("Beacon Remote Communincation", function() {
         });
     });
 
-    it('responds to DONE message', function(done) {
+    it('responds to SIGNAL:DONE message', function(done) {
         ipc.of.auth_socket.emit('SIGNAL:DONE', {});
 
         var disconnectPromise = new Promise(function(resolve, reject) {
@@ -290,6 +290,7 @@ describe("Beacon Remote Communincation", function() {
                     expect(data.status).to.be.true;
                 }
                 catch(err) { reject(err); }
+                ipc.disconnect('auth_socket');
                 resolve();
             });
         });
@@ -300,5 +301,34 @@ describe("Beacon Remote Communincation", function() {
             done();
         })
         .catch(done);
+    });
+
+    it('refuses a SIGNAL:DONE message on an unothorized socket', function(done) {
+        ipc.connectToNet('nauth_socket', '127.0.0.1', 7777, function() {
+            ipc.of.nauth_socket.emit('SIGNAL:DONE');
+            ipc.of.nauth_socket.on('DONE:ACK', function(data) {
+                expect(data.status).to.be.false;
+                expect(data.error).to.equal("Unauthorized");
+                done();
+            });
+        });
+    });
+
+    it('refuses a KLYNG:JOB message on an unothorized socket', function(done) {
+        ipc.of.nauth_socket.emit('KLYNG:JOB', {});
+        ipc.of.nauth_socket.on('JOB:ACK', function(data) {
+            expect(data.status).to.be.false;
+            expect(data.error).to.equal("Unauthorized");
+            done();
+        });
+    });
+
+    it('refuses an AUTH attempt on an unsecure socket', function(done) {
+        ipc.of.nauth_socket.emit('AUTH', {});
+        ipc.of.nauth_socket.on('AUTH:STATUS', function(data) {
+            expect(data.status).to.be.false;
+            expect(data.error).to.equal("unsecure channel");
+            done();
+        });
     });
 });
