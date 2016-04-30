@@ -54,7 +54,7 @@ describe('Beacon\'s Jobs Runner', function() {
             });
             router.setLocalChannel(0, fake_instance);
 
-            var job = {size: 2, startId: 1, app: './tests/fixtures/beacon/runner-fake-job.js'};
+            var job = {size: 2, subsize: 1, start: 1, app: './tests/fixtures/beacon/runner-fake-job.js'};
 
             runner.runLocally(job);
 
