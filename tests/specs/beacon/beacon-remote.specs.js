@@ -1,6 +1,7 @@
 var tcp = require('../../../lib/tcp');
 var utilis = require('../../../lib/utils');
 var jobman = require('../../../lib/jobs-runner');
+var router = require('../../../lib/router');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
 var ipc = require('node-ipc');
@@ -295,6 +296,7 @@ describe("Beacon Remote Communincation", function() {
 
         Promise.all([disconnectPromise, endPromise])
         .then(function() {
+            expect(router.isClean()).to.be.true;
             done();
         })
         .catch(done);
