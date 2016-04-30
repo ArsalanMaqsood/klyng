@@ -288,13 +288,17 @@ describe("Beacon Remote Communincation", function() {
             });
         });
 
-        var endPromise = new Promise(function(resolve, reject) {
-            ipc.of.auth_socket.socket.on('end', function() {
+        var ackPromise = new Promise(function(resolve, reject) {
+            ipc.of.auth_socket.on('DONE:ACK', function(data) {
+                try {
+                    expect(data.status).to.be.true;
+                }
+                catch(err) { reject(err); }
                 resolve();
             });
         });
 
-        Promise.all([disconnectPromise, endPromise])
+        Promise.all([disconnectPromise, ackPromise])
         .then(function() {
             expect(router.isClean()).to.be.true;
             done();
