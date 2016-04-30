@@ -280,10 +280,6 @@ describe("Beacon Remote Communincation", function() {
 
         var disconnectPromise = new Promise(function(resolve, reject) {
             ipc.server.on('close', function(socket) {
-                try {
-                    expect(socket.remoteAddress).to.equal('127.0.0.1');
-                }
-                catch(error) { reject(error); }
                 resolve();
             });
         });
