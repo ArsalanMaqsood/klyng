@@ -182,6 +182,31 @@ describe("Beacon Remote Communincation", function() {
         });
     });
 
+    it('sends a DONE signal to a remote beacon', function(done) {
+        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+
+        tcp.connectTo('127.0.0.1', 4895)
+        .then(function(connection) {
+            return tcp.exchangeKeyOver(connection);
+        })
+        .then(function(params) {
+            return tcp.authOver(params.connection, params.secret, 'a1b2c3d4');
+        })
+        .then(function(params) {
+            return tcp.signalDoneOver(params.connection);
+        })
+        .then(function() {
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            fake_server.kill();
+            done();
+        })
+        .catch(function(err) {
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            fake_server.kill();
+            done(err);
+        });
+    })
+
     it('responds to KEY-EXT:PARAMS and creates a shared secret', function(done) {
         ipc.connectToNet('auth_socket', '127.0.0.1', 7777, function() {
             var dhObj = utilis.diffieHellman();

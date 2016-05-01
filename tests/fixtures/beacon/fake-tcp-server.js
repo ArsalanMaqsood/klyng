@@ -65,6 +65,10 @@ ipc.serveNet('127.0.0.1', 4895, function() {
 
         ipc.server.emit(socket, 'JOB:ACK', ack);
     })
+
+    ipc.server.on('SIGNAL:DONE', function(data, socket) {
+        ipc.server.emit(socket, 'DONE:ACK', {status: true});
+    })
 });
 
 ipc.server.start();
