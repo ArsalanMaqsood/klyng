@@ -4,7 +4,8 @@
   "description": "A message-passing distributed computing framework for node.js",
   "bin": "bin/main.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive ./tests/specs"
+    "test": "./node_modules/.bin/mocha --recursive ./tests/specs",
+    "integration-test": "mocha ./tests/integration/run.js"
   },
   "author": {
     "name": "Mostafa Samir",
