@@ -39,7 +39,10 @@ ipc.serveNet('127.0.0.1', 4895, function() {
 
     ipc.server.on('AUTH', function(data, socket) {
         var decrypted = utils.verify(data, secret);
-        ipc.server.emit(socket, 'AUTH:STATUS', {status: decrypted.data === password});
+        if(decrypted.data === password)
+            ipc.server.emit(socket, 'AUTH:STATUS', {status: true});
+        else
+            ipc.server.emit(socket, 'AUTH:STATUS', {status: false, error:"incorrect password"});
     });
 
     ipc.server.on('KLYNG:JOB', function(data, socket) {

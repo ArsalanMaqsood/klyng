@@ -105,7 +105,6 @@ describe("Beacon Remote Communincation", function() {
             return tcp.authOver(params.connection, params.secret, 'a1b2c3d4');
         })
         .then(function(params) {
-            expect(params.status).to.equal(true);
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
             done();
@@ -132,15 +131,15 @@ describe("Beacon Remote Communincation", function() {
             return tcp.authOver(params.connection, params.secret, '12345678');
         })
         .then(function(params) {
-            expect(params.status).to.equal(false);
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            fake_server.kill();
+            done(new Error("This should never happen"));
+        })
+        .catch(function(err) {
+            expect(err.message).to.equal("incorrect password");
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
             done();
-        })
-        .catch(function(err) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
-            done(err);
         });
     });
 
