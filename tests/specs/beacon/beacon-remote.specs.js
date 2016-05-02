@@ -136,7 +136,7 @@ describe("Beacon Remote Communincation", function() {
             done(new Error("This should never happen"));
         })
         .catch(function(err) {
-            expect(err.message).to.equal("incorrect password");
+            expect(err.message).to.equal("127.0.0.1:4895 incorrect password");
             tcp.disconnectFrom('127.0.0.1', 4895);
             fake_server.kill();
             done();
