@@ -32,7 +32,7 @@ else if(!!args['num-processes'] && !!args['app']) {
             job_descriptor.hosts = hosts;
         }
         else {
-            console.log(hosts.error);
+            console.error(hosts.error);
             process.exit();
         }
     }
