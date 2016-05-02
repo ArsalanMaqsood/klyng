@@ -8,6 +8,8 @@ var ipc = require('node-ipc');
 
 var configs = require('../../../lib/beacon-configs');
 
+var fake_server;
+
 configs.configureRemoteIPC(ipc);
 
 describe("Beacon Remote Communincation", function() {
@@ -31,27 +33,26 @@ describe("Beacon Remote Communincation", function() {
         }
     });
 
+    afterEach(function(done) {
+        tcp.disconnectFrom('127.0.0.1', 4895);
+        fake_server.kill();
+        setTimeout(done, 500);
+    });
+
     it('connects/disconnects to/from a running tcp server', function(done) {
 
-        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+        fake_server= spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
 
-        setTimeout(function() {
-            tcp.connectTo('127.0.0.1', 4895)
-            .then(function(connection) {
-                expect(!!connection).to.equal(true);
-                expect(connection.socket.destroyed).to.equal(false);
-                tcp.disconnectFrom('127.0.0.1', 4895);
-                expect(connection.socket.destroyed).to.equal(true);
+        tcp.connectTo('127.0.0.1', 4895)
+        .then(function(connection) {
+            expect(!!connection).to.equal(true);
+            expect(connection.socket.destroyed).to.equal(false);
+            tcp.disconnectFrom('127.0.0.1', 4895);
+            expect(connection.socket.destroyed).to.equal(true);
 
-                fake_server.kill();
-                setTimeout(done, 1000);
-            })
-            .catch(function(err) {
-                tcp.disconnectFrom('127.0.0.1', 4895);
-                fake_server.kill();
-                done(err);
-            });
-        }, 1000);
+            done();
+        })
+        .catch(done);
     });
 
     it('fails to connect to non-existing tcp server', function(done) {
@@ -62,14 +63,13 @@ describe("Beacon Remote Communincation", function() {
             done(new Error("This should never happen"));
         })
         .catch(function(err) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
             done();
         });
     });
 
     it('exchanges a shared secret key with tcp server', function(done) {
 
-        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+        fake_server= spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
         var fake_server_stdout = "";
         fake_server.stdout.on('data', function(chunck) { fake_server_stdout += chunck.toString().trim(); });
 
@@ -79,20 +79,14 @@ describe("Beacon Remote Communincation", function() {
         })
         .then(function(params) {
             expect(params.secret).to.equal(fake_server_stdout);
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
             done();
         })
-        .catch(function(err) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
-            done(err);
-        });
+        .catch(done);
     });
 
     it('authorizes access to remote address with correct password', function(done) {
 
-        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+        fake_server= spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
 
         var con = null;
 
@@ -105,20 +99,14 @@ describe("Beacon Remote Communincation", function() {
             return tcp.authOver(params.connection, params.secret, 'a1b2c3d4');
         })
         .then(function(params) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
             done();
         })
-        .catch(function(err) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
-            done(err);
-        });
+        .catch(done);
     });
 
     it('fails to authorize access to remote address due to wrong password', function(done) {
 
-        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+        fake_server= spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
 
         var con = null;
 
@@ -131,20 +119,16 @@ describe("Beacon Remote Communincation", function() {
             return tcp.authOver(params.connection, params.secret, '12345678');
         })
         .then(function(params) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
             done(new Error("This should never happen"));
         })
         .catch(function(err) {
             expect(err.message).to.equal("127.0.0.1:4895 incorrect password");
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
             done();
         });
     });
 
     it('sends a job to a remote beacon', function(done) {
-        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+        fake_server= spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
 
         tcp.connectTo('127.0.0.1', 4895)
         .then(function(connection) {
@@ -169,20 +153,14 @@ describe("Beacon Remote Communincation", function() {
         })
         .then(function(sent) {
             if(sent) {
-                tcp.disconnectFrom('127.0.0.1', 4895);
-                fake_server.kill();
                 done();
             }
         })
-        .catch(function(err) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
-            done(err);
-        });
+        .catch(done);
     });
 
     it('sends a DONE signal to a remote beacon', function(done) {
-        var fake_server = spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
+        fake_server= spawn('node', ['./tests/fixtures/beacon/fake-tcp-server.js']);
 
         tcp.connectTo('127.0.0.1', 4895)
         .then(function(connection) {
@@ -195,15 +173,9 @@ describe("Beacon Remote Communincation", function() {
             return tcp.signalDoneOver(params.connection);
         })
         .then(function() {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
             done();
         })
-        .catch(function(err) {
-            tcp.disconnectFrom('127.0.0.1', 4895);
-            fake_server.kill();
-            done(err);
-        });
+        .catch(done);
     })
 
     it('responds to KEY-EXT:PARAMS and creates a shared secret', function(done) {
