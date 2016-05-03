@@ -12,7 +12,9 @@ var machinesWithLocalPath = __dirname + "/assets/machines.with.local.json";
 var machinesWithoutLocalPath = __dirname + "/assets/machines.without.local.json";
 var machinesWithWrongPass = __dirname + "/assets/machines.with.wrong.pass.json";
 var runnerPath = __dirname + "/../../bin/main.js";
+var beaconPath = __dirname + "/../../lib/beacon.js";
 var tcpBeacons = [];
+var localBeacon;
 
 before(function() {
 
@@ -29,7 +31,7 @@ before(function() {
     process.stdout.write('  Restarting Local Beacon ...');
 
     spawnSync('node', [runnerPath, '-d']);
-    spawnSync('node', [runnerPath, '-u']);
+    localBeacon = spawn('node', [beaconPath]);
 
     process.stdout.write(' Done!\n\n');
 });
@@ -45,7 +47,8 @@ after(function() {
     process.stdout.write(' Done!\n');
     process.stdout.write('  Stopping Local Beacon ...');
 
-    spawnSync('node', [runnerPath, '-d']);
+    //spawnSync('node', [runnerPath, '-d']);
+    localBeacon.kill();
 
     process.stdout.write(' Done!\n\n');
 });
@@ -222,5 +225,187 @@ describe("Klyng's Integartion tests", function() {
         });
     });
 
-    // TODO: Add tests for abortion due to: remote faliure, local faliure, parent terminated
+    it('aborts when one of the remote node is not up', function(done) {
+        // kill node at :8001
+        tcpBeacons[1].kill();
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, jobPath]);
+        var parentStderr = [];
+
+        var stderrRlInterface = readline.createInterface({input: parent.stderr});
+        stderrRlInterface.on('line', (line) => {
+            parentStderr.push(line);
+        });
+
+        parent.on('exit', () => {
+            expect(parentStderr).to.include('[Aborted]: connect ECONNREFUSED 127.0.0.1:8001');
+
+            // wait for a second for the beacons to clear there data structures
+            setTimeout(done, 1500);
+        });
+    });
+
+    it('ensures that the beacons aborted gracefully (by running a job)', function(done) {
+
+        tcpBeacons[1] = spawn('node', [tcpBeaconsPath, 8001]);
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, jobPath]);
+        var parentStdout = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        parent.stderr.on('data', (chunk) => {
+            console.log(chunk.toString().trim());
+        });
+
+        parent.on('exit', () => {
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+            done();
+        });
+    });
+
+    it('aborts when one of the remote node fails during the job', function(done) {
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, badJobPath]);
+        var parentStdout = [];
+        var parentStderr = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+        var stderrRlInterface = readline.createInterface({input: parent.stderr});
+
+        stderrRlInterface.on('line', (line) => {
+            parentStderr.push(line);
+        });
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        setTimeout(() => tcpBeacons[1].kill(), 5000);
+
+        parent.on('exit', () => {
+
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+
+            expect(parentStderr).to.include('[Aborted]: connect ECONNREFUSED 127.0.0.1:8001');
+
+            // wait for a second for the beacons to clear there data structures
+            setTimeout(done, 1500);
+        });
+    });
+
+    it('ensures that the beacons aborted gracefully (by running a job)', function(done) {
+
+        tcpBeacons[1] = spawn('node', [tcpBeaconsPath, 8001]);
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, jobPath]);
+        var parentStdout = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        parent.stderr.on('data', (chunk) => {
+            console.log(chunk.toString().trim());
+        });
+
+        parent.on('exit', () => {
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+            done();
+        });
+    });
+
+    it('aborts when the local beacon fails during the job', function(done) {
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, badJobPath]);
+        var parentStdout = [];
+        var parentStderr = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+        var stderrRlInterface = readline.createInterface({input: parent.stderr});
+
+        stderrRlInterface.on('line', (line) => {
+            parentStderr.push(line);
+        });
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        setTimeout(() => localBeacon.kill(), 5000);
+
+        parent.on('exit', () => {
+
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+
+            expect(parentStderr).to.include('[Aborted]: Lost connection to local beacon');
+
+            // wait for a second for the beacons to clear there data structures
+            setTimeout(done, 1500);
+        });
+    });
+
+    it('ensures that the beacons aborted gracefully (by running a job)', function(done) {
+
+        localBeacon = spawn('node', [beaconPath]);
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, jobPath]);
+        var parentStdout = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        parent.stderr.on('data', (chunk) => {
+            console.log(chunk.toString().trim());
+        });
+
+        parent.on('exit', () => {
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+            done();
+        });
+    });
 });
