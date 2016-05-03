@@ -1,5 +1,6 @@
 var readline = require('readline');
 var spawn = require('child_process').spawn;
+var os = require('os').platform();
 var spawnSync = require('child_process').spawnSync;
 var expect = require('chai').expect;
 
@@ -155,7 +156,10 @@ describe("Klyng's Integartion tests", function() {
     });
 
     it('aborts on keyboard interrupt (SIGINT)', function(done) {
-        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, badJobPath]);
+
+        var spawnOptions = (os === "win32") ? {stdio: [null, null, null, 'ipc']} : {};
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, badJobPath], spawnOptions);
         var parentStdout = [];
         var parentStderr = [];
 
@@ -170,7 +174,8 @@ describe("Klyng's Integartion tests", function() {
             parentStdout.push(line);
         });
 
-        setTimeout(() => parent.kill('SIGINT'), 5000);
+
+        setTimeout(() => os === "win32" ? parent.send('SIGINT') : parent.kill('SIGINT'), 5000);
 
         parent.on('exit', () => {
             for(var i = 0; i < 3; ++i) {
