@@ -408,4 +408,61 @@ describe("Klyng's Integartion tests", function() {
             done();
         });
     });
+
+    it('aborts when the runner closes abruptly during a job', function(done) {
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, badJobPath]);
+        var parentStdout = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        parent.stderr.on('data', (chunk) => {
+            console.log(chunk.toString().trim());
+        });
+
+        setTimeout(() => parent.kill(), 5000);
+
+        parent.on('exit', () => {
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+            setTimeout(done, 3000);
+        });
+    });
+
+    it('ensures that the beacons aborted gracefully (by running a job)', function(done) {
+
+        var parent = spawn('node', [runnerPath, '-n', 3, '-m', machinesWithLocalPath, jobPath]);
+        var parentStdout = [];
+
+        var stdoutRlInterface = readline.createInterface({input: parent.stdout});
+
+        stdoutRlInterface.on('line', (line) => {
+            parentStdout.push(line);
+        });
+
+        parent.stderr.on('data', (chunk) => {
+            console.log(chunk.toString().trim());
+        });
+
+        parent.on('exit', () => {
+            for(var i = 0; i < 3; ++i) {
+                for(var j = 0; j < 3; j++) {
+                    if(i !== j) {
+                        var msg = "Greetings P" + i + " from P" + j;
+                        expect(parentStdout).to.include(msg);
+                    }
+                }
+            }
+            done();
+        });
+    });
 });
