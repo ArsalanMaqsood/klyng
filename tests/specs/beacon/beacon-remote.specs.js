@@ -1,6 +1,6 @@
 var tcp = require('../../../lib/tcp');
 var cs = require('../../../lib/crypto-service');
-var jobman = require('../../../lib/jobs-runner');
+var jobman = require('../../../lib/job-manager');
 var router = require('../../../lib/router');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;

@@ -1,6 +1,6 @@
 var ipc = require('node-ipc');
 var router = require('../../../lib/router.js');
-var runner = require('../../../lib/jobs-runner.js');
+var jobman = require('../../../lib/job-manager.js');
 var expect = require('chai').expect;
 var spawn = require('child_process').spawn;
 var fs = require('fs');
@@ -13,7 +13,7 @@ ipc.config.silent = true;
 ipc.config.id = 'FAKE';
 ipc.config.retry = 1500;
 
-describe('Beacon\'s Jobs Runner', function() {
+describe('Beacon\'s Job Manager', function() {
 
     var globals = {};
 
@@ -56,7 +56,7 @@ describe('Beacon\'s Jobs Runner', function() {
 
             var job = {size: 2, subsize: 1, start: 1, app: './tests/fixtures/beacon/runner-fake-job.js'};
 
-            runner.runLocally(job);
+            jobman.runLocally(job);
 
             Promise.all([fake_parent_exit, fake_instance_exit]).then(function() {
                 expect(fake_parent_stdout).to.equal("Hello from Fake");
@@ -67,7 +67,7 @@ describe('Beacon\'s Jobs Runner', function() {
     });
 
     it('packs an app correctly', function(done) {
-        runner.pack({app: './tests/fixtures/beacon/fake_app/main.js'})
+        jobman.pack({app: './tests/fixtures/beacon/fake_app/main.js'})
         .then(function(app) {
             var packg = zipper.sync.unzip(new Buffer(app.pckg, "base64")).memory();
             var packg_contents = packg.contents();
@@ -84,7 +84,7 @@ describe('Beacon\'s Jobs Runner', function() {
     });
 
     it('unpacks an app correctly', function(done) {
-        runner.unpack({
+        jobman.unpack({
             id: globals.id,
             pckg: fs.readFileSync("./tests/fixtures/beacon/fake_app.zip", {encoding: "base64"})
         })
@@ -114,7 +114,7 @@ describe('Beacon\'s Jobs Runner', function() {
             size: 11
         };
 
-        var plan = runner.divide(fake_job);
+        var plan = jobman.divide(fake_job);
         expect(plan.local).to.exist;
         expect(plan.local.count).to.equal(2);
         expect(plan.local.start).to.equal(0);
@@ -136,7 +136,7 @@ describe('Beacon\'s Jobs Runner', function() {
             size: 11
         };
 
-        var plan = runner.divide(fake_job);
+        var plan = jobman.divide(fake_job);
         expect(plan.local.count).to.equal(2);
         expect(plan["192.168.0.100:2222"].count).to.equal(1);
         expect(plan["192.168.0.58:2222"].count).to.equal(8);
@@ -152,7 +152,7 @@ describe('Beacon\'s Jobs Runner', function() {
             size: 9
         };
 
-        var plan = runner.divide(fake_job);
+        var plan = jobman.divide(fake_job);
         expect(plan.local.count).to.equal(3);
         expect(plan["192.168.0.100:2222"].count).to.equal(2);
         expect(plan["192.168.0.58:2222"].count).to.equal(4);
