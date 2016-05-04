@@ -305,7 +305,8 @@ describe("Klyng's Integartion tests", function() {
                 }
             }
 
-            expect(parentStderr).to.include('[Aborted]: connect ECONNREFUSED 127.0.0.1:8001');
+            expect(parentStderr.length).to.be.above(0);
+            expect(parentStderr[0]).to.have.string('connect ECONNREFUSED 127.0.0.1:8001');
 
             // wait for a second for the beacons to clear there data structures
             setTimeout(done, 1500);
