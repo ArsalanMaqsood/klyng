@@ -55,7 +55,7 @@ after(function() {
 
 describe("Klyng's Integartion tests", function() {
 
-    this.timeout(10000);
+    this.timeout(15000);
 
     it('runs a job of size 6 on local and 2 remote hosts', function(done) {
 
@@ -375,7 +375,7 @@ describe("Klyng's Integartion tests", function() {
             expect(parentStderr).to.include('[Aborted]: Lost connection to local beacon');
 
             // wait for a second for the beacons to clear there data structures
-            setTimeout(done, 1500);
+            setTimeout(done, 3000);
         });
     });
 
