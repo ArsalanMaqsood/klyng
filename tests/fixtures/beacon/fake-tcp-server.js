@@ -1,6 +1,6 @@
 var ipc = require('node-ipc');
 var crypto = require('crypto');
-var utils = require('../../../lib/utils');
+var cs = require('../../../lib/crypto-service');
 
 ipc.config.silent = true;
 
@@ -26,7 +26,7 @@ ipc.serveNet('127.0.0.1', 4895, function() {
     });
 
     ipc.server.on('KEY-EXT:PARAMS', function(data, socket) {
-        var dhObj = utils.diffieHellman(data.prime);
+        var dhObj = cs.diffieHellman(data.prime);
         var publicKey = dhObj.publicKey;
 
         var sharedSecret = dhObj.computeSecret(data.key);
@@ -38,7 +38,7 @@ ipc.serveNet('127.0.0.1', 4895, function() {
     });
 
     ipc.server.on('AUTH', function(data, socket) {
-        var decrypted = utils.verify(data, secret);
+        var decrypted = cs.verify(data, secret);
         if(decrypted.data === password)
             ipc.server.emit(socket, 'AUTH:STATUS', {status: true});
         else
@@ -46,7 +46,7 @@ ipc.serveNet('127.0.0.1', 4895, function() {
     });
 
     ipc.server.on('KLYNG:JOB', function(data, socket) {
-        var decrypted = utils.verify(data, secret);
+        var decrypted = cs.verify(data, secret);
         var ack = {status: false, error: "REMOTE: BAD JOB"};
         if(!!decrypted) {
             var correctId = (decrypted.data.id === 1);

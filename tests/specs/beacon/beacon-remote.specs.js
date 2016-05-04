@@ -1,5 +1,5 @@
 var tcp = require('../../../lib/tcp');
-var utilis = require('../../../lib/utils');
+var cs = require('../../../lib/crypto-service');
 var jobman = require('../../../lib/jobs-runner');
 var router = require('../../../lib/router');
 var expect = require('chai').expect;
@@ -180,7 +180,7 @@ describe("Beacon Remote Communincation", function() {
 
     it('responds to KEY-EXT:PARAMS and creates a shared secret', function(done) {
         ipc.connectToNet('auth_socket', '127.0.0.1', 7777, function() {
-            var dhObj = utilis.diffieHellman();
+            var dhObj = cs.diffieHellman();
             ipc.of.auth_socket.emit('KEY-EXT:PARAMS', {
                 prime: dhObj.prime,
                 key: dhObj.publicKey
@@ -188,7 +188,7 @@ describe("Beacon Remote Communincation", function() {
 
             ipc.of.auth_socket.on('KEY-EXT:PUBLIC', function(data) {
                 ipc.of.auth_socket.klyng_secret = dhObj.computeSecret(data.key);
-                var welcomeMsg = utilis.verify(data.cipherWelcome, ipc.of.auth_socket.klyng_secret);
+                var welcomeMsg = cs.verify(data.cipherWelcome, ipc.of.auth_socket.klyng_secret);
 
                 expect(welcomeMsg).to.equal("Hello from Beacon's TCP Server!");
                 done();
@@ -198,7 +198,7 @@ describe("Beacon Remote Communincation", function() {
 
     it('responds to AUTH message with an incorrect password', function(done) {
         var secret = ipc.of.auth_socket.klyng_secret;
-        ipc.of.auth_socket.emit('AUTH', utilis.secure({data: "12345"}, secret));
+        ipc.of.auth_socket.emit('AUTH', cs.secure({data: "12345"}, secret));
         ipc.of.auth_socket.on('AUTH:STATUS', function(data) {
             expect(data.status).to.be.false;
             expect(data.error).to.equal("incorrect password");
@@ -208,7 +208,7 @@ describe("Beacon Remote Communincation", function() {
 
     it('responds to AUTH message with a correct password', function(done) {
         var secret = ipc.of.auth_socket.klyng_secret;
-        ipc.of.auth_socket.emit('AUTH', utilis.secure({data: "dummy"}, secret));
+        ipc.of.auth_socket.emit('AUTH', cs.secure({data: "dummy"}, secret));
         ipc.of.auth_socket.on('AUTH:STATUS', function(data) {
             expect(data.status).to.be.true;
             done();
@@ -245,7 +245,7 @@ describe("Beacon Remote Communincation", function() {
         .then(function(app) {
             return new Promise(function(resolve, reject) {
                 job.app = app;
-                ipc.of.auth_socket.emit('KLYNG:JOB', utilis.secure({data: job}, secret));
+                ipc.of.auth_socket.emit('KLYNG:JOB', cs.secure({data: job}, secret));
                 ipc.of.auth_socket.on('JOB:ACK', function(data) {
                     if(!data.status) {
                         reject(new Error(data.error));
