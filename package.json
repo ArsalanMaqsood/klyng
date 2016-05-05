@@ -6,7 +6,8 @@
   "scripts": {
     "test": "gulp test",
     "unit-tests": "gulp unit-tests",
-    "integration-tests": "gulp integration-tests"
+    "integration-tests": "gulp integration-tests",
+    "benchmarks": "node tests/benchmarks/run.js"
   },
   "author": {
     "name": "Mostafa Samir",
