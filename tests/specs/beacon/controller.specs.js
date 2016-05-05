@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 
 describe('Beacon\'s Controller', function() {
 
-    this.timeout(3000);
+    this.timeout(5000);
 
     it('checks and finds the beacon not running', function(done) {
         controller.checkIfRunning()
@@ -17,14 +17,6 @@ describe('Beacon\'s Controller', function() {
         controller.start()
         .then(function(started) {
             expect(started).to.equal(true);
-            done();
-        });
-    });
-
-    it('checks and finds the beacon running now', function(done) {
-        controller.checkIfRunning()
-        .then(function(running) {
-            expect(running).to.equal(true);
             done();
         });
     });
@@ -55,5 +47,5 @@ describe('Beacon\'s Controller', function() {
             done();
         });
     });
-    
+
 });

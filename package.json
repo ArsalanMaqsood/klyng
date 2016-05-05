@@ -4,25 +4,41 @@
   "description": "A message-passing distributed computing framework for node.js",
   "bin": "bin/main.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive ./tests/specs"
+    "test": "gulp test",
+    "unit-tests": "gulp unit-tests",
+    "integration-tests": "gulp integration-tests"
   },
   "author": {
     "name": "Mostafa Samir",
     "email": "mostafa.3210@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["distributed", "message-passing", "parallel"],
+  "keywords": [
+    "distributed",
+    "message-passing",
+    "parallel"
+  ],
   "repository": {
-      "type": "git",
-      "url": "https://github.com/Mostafa-Samir/klyng.git"
+    "type": "git",
+    "url": "https://github.com/Mostafa-Samir/klyng.git"
   },
   "dependencies": {
+    "browserify": "^13.0.0",
     "command-line-args": "^2.1.4",
     "fibers": "^1.0.9",
-    "node-ipc": "^6.0.0"
+    "node-ipc": "https://github.com/Mostafa-Samir/node-ipc/tarball/production",
+    "zip-local": "^0.3.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-sequence": "^0.4.5",
+    "mocha": "^2.4.5",
+    "rimraf": "^2.5.2"
+  },
+  "engines": {
+      "node": ">=4.2.3"
   }
+
 }

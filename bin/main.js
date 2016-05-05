@@ -20,8 +20,22 @@ else if(!!args["beacon-down"]) {
     cli.beaconDown();
 }
 else if(!!args['num-processes'] && !!args['app']) {
-    cli.run({
+
+    var job_descriptor = {
         size: args['num-processes'],
         app: path.resolve(process.cwd(), args['app'])
-    });
+    };
+
+    if(!!args['machines']) {
+        var hosts = cli.parseHosts(args['machines']);
+        if(!hosts.error) {
+            job_descriptor.hosts = hosts;
+        }
+        else {
+            console.error(hosts.error);
+            process.exit();
+        }
+    }
+
+    cli.run(job_descriptor);
 }

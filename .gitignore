@@ -37,3 +37,6 @@ node_modules
 
 # fake_app.zip asset as it changes every test run
 tests/fixtures/beacon/fake_app.zip
+
+# compiled mpi programs
+mpi.out

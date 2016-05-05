@@ -1,0 +1,7 @@
+{
+    "local" : {"max_procs": 2},
+    "192.168.0.10": {},
+    "192.168.0.2": {"port": 4578, "max_procs": 3},
+    "192.168.0.103": {"max_procs": 5, "passwd": "h3llo"},
+    "192.168.0.20": {"max_procs": 1, "port": 5986, "passwd": "oll3h"}
+}

@@ -1,5 +1,5 @@
 var fiber = require('fibers');
-var utils = require('./lib/utils.js');
+var utilis = require('./lib/api-utilis');
 
 // holds the size of the job the process is participating in
 var job_size = -1;
@@ -18,7 +18,7 @@ var process_fiber = undefined;
 
 process.on('message', function(message) {
     if(message.type === 'klyng:msg') {
-        if(utils.match(registered_sync_request, message.header)) {
+        if(utilis.match(registered_sync_request, message.header)) {
             // reset and resume
             registered_sync_request = null;
             process_fiber.run(message.data);
@@ -114,14 +114,14 @@ function recv(criteria) {
         subject: "-1", // with any subject
     };
 
-    var used_criteria = utils.blend(default_criteria, criteria);
+    var used_criteria = utilis.blend(default_criteria, criteria);
 
     // first check the queue for a message matching the criteria
     // TODO: come up with a more effcient and scalable implementation for the queue checking
     var queue_size = queue.length;
     for(var i = 0; i < queue_size; i++) {
         var message = queue[i];
-        if(utils.match(used_criteria, message.header)) {
+        if(utilis.match(used_criteria, message.header)) {
             queue.splice(i, 1);  // removes the message from the queue
             return message.data;
         }

@@ -1,0 +1,17 @@
+{
+    "local": {
+        "max_procs": 2
+    },
+
+    "127.0.0.1": {
+        "port": 8000,
+        "passwd": "dummy",
+        "max_procs": 2
+    },
+
+    "localhost": {
+        "port": 8001,
+        "passwd": "dummy",
+        "max_procs": 2
+    }
+}
