@@ -4,8 +4,9 @@
   "description": "A message-passing distributed computing framework for node.js",
   "bin": "bin/main.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive ./tests/specs",
-    "integration-test": "mocha ./tests/integration/run.js"
+    "test": "gulp test",
+    "unit-tests": "gulp unit-tests",
+    "integration-tests": "gulp integration-tests"
   },
   "author": {
     "name": "Mostafa Samir",
@@ -30,6 +31,9 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-sequence": "^0.4.5",
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2"
   }
