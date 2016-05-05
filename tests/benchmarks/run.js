@@ -128,7 +128,7 @@ function getmaxcputime(stdout, n) {
     return max_cputime;
 }
 
-console.log("Klyng v0.1.0 Benchmarks".cyan.bold);
+console.log("Klyng Benchmarks".cyan.bold);
 console.log("");
 
 var frameworks = ['MPI', 'klyng'];
