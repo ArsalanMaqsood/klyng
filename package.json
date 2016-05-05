@@ -31,6 +31,8 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "colors": "^1.1.2",
+    "getrusage": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-mocha": "^2.2.0",
     "gulp-sequence": "^0.4.5",
