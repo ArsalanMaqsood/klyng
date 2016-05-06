@@ -92,7 +92,7 @@ describe('Beacon\'s Job Manager', function() {
             var unpacked_app = spawn('node', [app]);
             var unpacked_app_stdout = "";
             unpacked_app.stdout.on('data', function(chunck) {
-                unpacked_app_stdout += chunck.toString().trim();
+                unpacked_app_stdout += chunck.toString().replace(/[\n\r]/g, '');
             });
 
             unpacked_app.on('exit', function() {

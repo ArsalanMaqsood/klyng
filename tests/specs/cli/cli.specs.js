@@ -1,5 +1,6 @@
 var spawn = require('child_process').spawn;
 var expect = require('chai').expect;
+var readline = require('readline');
 var beacon = require('../../../lib/beacon-controller.js');
 
 describe('Command Line Interface', function() {
@@ -9,7 +10,8 @@ describe('Command Line Interface', function() {
     it('runs the cli with no options', function(done) {
         var cli = spawn('node', ['./bin/main.js']);
         var cli_stdout = [];
-        cli.stdout.on('data', function(chunck){ cli_stdout.push(chunck.toString().trim()); });
+        var rli = readline.createInterface({input: cli.stdout});
+        rli.on('line', function(chunck){ cli_stdout.push(chunck.toString().trim()); });
 
         cli.on('exit', function() {
             expect(cli_stdout).to.deep.equal([
