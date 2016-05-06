@@ -15,7 +15,7 @@
 </p>
 
 <p align='center'>
-    <strong>Write and execute distributed code on <i>any</i><a href='#system-requirements'>\*</a> platform that can run node.js</strong>
+    <strong>Write and execute distributed code on <i>any</i><a href='#system-requirements'>*</a> platform that can run node.js</strong>
 </p>
 
 # Distributed Hello World!
@@ -62,23 +62,13 @@ As the MPCT metric uses the actual time spent by an individual process on the CP
 
 Compared to MPICH2 with C/C++, the data shows that klyng and javascript scales with the number of processors just as well (and in some cases, even better).
 
-<div style="float:left">
-    <a href="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-mpct.png" target="\_blank">
-        <img style="width:48%;margin-right:1%;margin-bottom:1%" src="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-mpct.png">
-    </a>
+![Pi-MPCT](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-mpct.png)
 
-    <a href="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-mpct.png" target="\_blank">
-        <img style="width:48%;margin-left:1%;margin-bottom:1%" src="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-mpct.png">
-    </a>
+![Primes-MPCT](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-mpct.png)
 
-    <a href="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-rtet.png" target="\_blank">
-        <img style="width:48%;margin-right:1%;margin-top:1%" src="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-rtet.png">
-    </a>
+![Pi-RTET](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-rtet.png)
 
-    <a href="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-rtet.png" target="\_blank">
-        <img style="width:48%;margin-left:1%;margin-top:1%" src="https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-rtet.png">
-    </a>
-</div>
+![Primes-RTET](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-rtet.png)
 
 These data were collected on a machine with an Intel Core i5 2410M CPU @ 2.30GHz (2 physical cores, with hyper-threading disabled), running node v5.4.1 on Ubuntu14.04. Each task of two ran 100 times and the RTET and MPCT were collected for each run and averaged in the end into the data depicted in the charts. This process was repeated for each framework (MPICH2 and klyng) on each process count (1, 2, and 4).
 
