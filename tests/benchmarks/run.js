@@ -52,6 +52,34 @@ var executed_tasks = args['tasks'].map(function(task) { return task.toLowerCase(
 args['metrics'] = args['metrics'].map(function(metric) { return metric.toLowerCase(); });
 
 /*
+ * checks if getrusage package is installed
+ * @return {Boolean}
+ */
+function check_getrusage() {
+    try {
+        require('getrusage');
+        return true;
+    }
+    catch(err) {
+        return false;
+    }
+}
+
+/*
+ * installs getrusage package
+ * @return {Boolean}: true if installed, false otherwise
+ */
+function install_getrusage() {
+    var install = spawn('npm', ['install', 'getrusage']);
+    if(install.stderr.length) {
+        return false;
+    }
+    else {
+        return check_getrusage();
+    }
+}
+
+/*
  * checks if mpi binaries {mpicc, mpiexec/mpirun} exist on the system
  * @return {Object}: {'exists': true/false, 'runner': 'mpirun'/'mpiexec'/undefined}
  */
@@ -167,6 +195,24 @@ if(!args['no-mpi']) {
     }
 
     process.stdout.write("\n");
+}
+
+process.stdout.write("Checking getrusage package ...");
+if(check_getrusage()) {
+    process.stdout.write(" Found!\n".green);
+}
+else {
+    process.stdout.write(" Not Found!\n".yellow);
+    process.stdout.write("Installing getrusage package ...");
+
+    var installation = install_getrusage();
+    if(installation) {
+        process.stdout.write(" Done!\n".green);
+    }
+    else {
+        process.stdout.write(" Failed!\n".red);
+        process.exit();
+    }
 }
 
 process.stdout.write("Retarting klyng's Beacon ...");
