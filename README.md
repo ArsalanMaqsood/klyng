@@ -53,7 +53,7 @@ When it comes to running jobs on remote devices, klyng implements several measur
 
 # Performance
 
-The benchmarks focus on two metrics:
+In order to evaluate klyng's performance and how well it scales with the number of processors, A benchmarking script was designed to compare klyng's performance to that of MPICH2 (with C/C++) on the same tasks. The benchmarks focused on two metrics:
 * **Runner Total Execution Time (RTET):** which is actual time taken by the job, form the moment the runner is executed with the job to the moment it exits.
 
 * **Max Process CPU Time (MPCT):** which is the maximum of the CPU time of all the participating processes in the job.
