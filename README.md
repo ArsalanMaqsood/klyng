@@ -40,7 +40,7 @@ klyng.init(main);
 
 # System Requirements
 
-You can use klyng anywhere; provided that you have node.js **v4.2.3 or later** installed. And because klyng is built on [node-fibers](https://github.com/laverdet/node-fibers), your also need to be able to run or build it. Fibers is naturally available via npm for Linux, OS X and Windows 7 (or later), for other operating systems compiling fibers from its C/C++ source would be required.
+You can use klyng anywhere; provided that you have node.js **v4.2.3 or later** installed. Also, because klyng is built on [node-fibers](https://github.com/laverdet/node-fibers), your need to be able to run or build fibers on your system. Fibers is naturally available via npm for Linux, OS X and Windows 7 (or later), for other operating systems you will probably need to compile fibers form its C/C++ source.
 
 # Security
 When it comes to running jobs on remote devices, klyng implements several measures to ensure a secure communication channel.
@@ -70,7 +70,13 @@ Compared to MPICH2 with C/C++, the data shows that klyng and javascript scales w
 
 ![Primes-RTET](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-rtet.png)
 
-These data were collected on a machine with an Intel Core i5 2410M CPU @ 2.30GHz (2 physical cores, with hyper-threading disabled), running node v5.4.1 on Ubuntu14.04. Each task of two ran 100 times and the RTET and MPCT were collected for each run and averaged in the end into the data depicted in the charts. This process was repeated for each framework (MPICH2 and klyng) on each process count (1, 2, and 4).
+The data represents how both MPICH2 and klyng scale with the number of processes on two computationally-intensive tasks:
+
+*  **Pi Approximation:** which approximates the value of π with the [arctan integral formula](https://en.wikipedia.org/wiki/Inverse_trigonometric_functions#Expression_as_definite_integrals) using the a [Reimann sum](http://mathworld.wolfram.com/RiemannSum.html) with Δx = 2x10⁻⁹.
+
+* **Counting Primes:** which counts the number of prime numbers between 1 and 10⁷ using the naive primality test of trial division.
+
+These data were collected on a machine with an Intel Core i5 2410M CPU @ 2.30GHz (2 physical cores, with hyper-threading disabled), running node v5.4.1 on Ubuntu14.04. Each task of the two ran 100 times and the RTET and MPCT were collected for each run and averaged in the end into the data depicted in the charts. This process was repeated for each framework (MPICH2 and klyng) on each process count (1, 2, and 4).
 
 To make these data reproducible, the benchmarking script along with the source code for the tasks in question are shipped with the framework. The benchmarking script is also customizable for different environment parameters and extensible for more tasks.
 
