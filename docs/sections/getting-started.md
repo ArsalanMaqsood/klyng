@@ -5,7 +5,7 @@ In this section we'll get started on working with klyng through the simple probl
 We'll start off by installing klyng on our system.
 
 ### Installation
-The klyng framework is divided into parts: the API that you're going to import in your program, and command-line interface (the CLI) that you're going to use to run your program.
+The klyng framework is divided into two parts: the API that you're going to import in your program, and command-line interface (the CLI) that you're going to use to run your program.
 
 So first of all, your going to have[¹](#foot-note1) to install klyng globally on your system to easily access the CLI when you attempt to run your programs. Then for each klyng program you going to write you'll need[²](#foot-note2) to install klyng as a dependency to import the API into your program.
 
@@ -13,7 +13,7 @@ Installing klyng is not a fancy complicated process, it's just an npm install:
 * `npm install -g klyng` for the initial global installation
 * `npm install klyng` for the dependency installation.
 
-However, on UNIX systems there is a little detail that you need to consider. On such system, npm by default installs global packages in `/usr/local/lib/node_modules`. This is probably going to cause security and permission problems as klyng would need to write files in its installation folder (The packed job files form remote nodes).
+However, on Unix systems there is a little detail that you need to consider. On such system, npm by default installs global packages in `/usr/local/lib/node_modules`. This is probably going to cause security and permission problems as klyng would need to write files in its installation folder (The packed job files form remote nodes).
 
 To avoid these possible issues in a secure way, it's recommended that you install klyng in another location than the npm's default. For example, you can create the following directory `~/.npm-modules/` and add the following line in your `~/.profile` file:
 
@@ -21,7 +21,7 @@ To avoid these possible issues in a secure way, it's recommended that you instal
 export PATH=~/.npm-modules/bin:$PATH
 ```
 
-This line ensures that you'll end up with klyng's CLI in your PATH so that you can run from anywhere. Now when you attempt to install klyng globally you do:
+This line ensures that you'll end up with klyng's CLI in your PATH so that you can run it from anywhere. Now when you attempt to install klyng globally you do:
 
 ```
 NPM_CONFIG_PREFIX=~/.npm-modules npm install -g klyng
@@ -83,7 +83,7 @@ klyng.init(main);
 ```
 The same thing goes for `klyng.init`, it has to be at the logical start of your program which doesn't necessarily align with the physical start.
 
-In order to generate the data the program will work on, we're gonna have a function that generates an array of 1 million random number. It's your choice where you're gonna put this function. You may put in the same file as the entry function, you could possibly put in a separate module, or you can even put it on a remote HTTP server and call via a GET request; whatever floats your boat. Here we'll treat it as if it's in the same file as the entry function.
+In order to generate the data on which the program will work, we're gonna have a function that generates an array of 1 million random number. It's your choice where you're gonna put this function. You may put in the same file as the entry function, you could possibly put in a separate module, or you can even put it on a remote HTTP server and call it via a GET request; whatever floats your boat. Here we'll treat it as if it's in the same file as the entry function.
 
 ```javascript
 function generateRandomData() {
@@ -103,9 +103,9 @@ In order to be able to divide the job between the participating processes, we ne
 * The number of processes participating in the job (aka the job size).
 * How to tell processes apart. For this a unique identifier is needed for each process.
 
-The first information can be retrieved by calling `klyng.size` which returns the number of the processes the job was started with. We can get the second piece of info by calling `klyng.rank`, which returns the unique identifier of the calling process. If a job with started with *n* processes, each process gets a unique identifier from *0,...,n-1*.
+The first information can be retrieved by calling `klyng.size` which returns the number of the processes the job was started with. We can get the second piece of info by calling `klyng.rank`, which returns the unique identifier of the calling process. If a job started with *n* processes, each process gets a unique identifier from *0,...,n-1*.
 
-After acquiring these information, we can easily tell the rank 0 process (which is called the root process), which is usually responsible for distributing the job over the other processes, how the job can be divided.
+After acquiring these information, we can easily tell the rank 0 process (aka the root process), which is usually responsible for distributing the job over the other processes, how the job can be divided.
 
 
 ```javascript
@@ -149,9 +149,9 @@ klyng.init(main);
 
 ### Sending and Receiving Messages
 
-After the job was partitioned over the participating processes, the root needs to send each other process it partition and each other process needs to receive it.
+After the job was partitioned over the participating processes, the root needs to send each other process its partition and each other process needs to receive it.
 
-For sending messages, the `klyng.send` method is used. The method takes a simple object that describes the message to be sent. This object must contain to fields: `to` which is the rank of the receiving process, and `data` which is the data to be sent (any serializable data can be sent). An optional `subject` field may be provided as an extra info to identify a message, it can be any data type that can be tested for equality in a shallow manner.
+For sending messages, the `klyng.send` method is used. The method takes a simple object that describes the message to be sent. This object must contain two fields: `to` which is the rank of the receiving process, and `data` which is the data to be sent (any serializable data can be sent). An optional `subject` field may be provided as an extra info to identify a message, it can be any data type that can be tested for equality in a shallow manner.
 
 For example, this call `klyng.send({to: 5, data: "Hello", subject:"Greetings"})` will send to the process ranked 5 a message carrying "Hello" with a subject "Greetings".
 
@@ -272,7 +272,7 @@ klyng --beacon-up
 ```
 This will start the beacon in the background if it's not already started. The beacon by default starts to listen for remote requests on port 2222 and is not protected by any password. To change that you can edit the `config.json` file with the desired port and password.
 
-You'll find the `config.json` in the directory in which klyng is installed. On Unix systems, assuming that you have followed the installation procedure described in the beginning, you find it in `~/.npm-modules/lib/node_modules/klyng`. On Windows, assuming you didn't change npm global prefix, you would find it in `%AppData%\Roaming\npm\node_modules\klyng`.
+You'll find the `config.json` in the directory in which klyng is installed. On Unix systems, assuming that you have followed the installation procedure described in the beginning, you would find it in `~/.npm-modules/lib/node_modules/klyng`. On Windows, assuming you didn't change npm global prefix, you would find it in `%AppData%\Roaming\npm\node_modules\klyng`.
 
 Note that any changes in the `config.json` won't take effect until the beacon is started. If the beacon was already running, you'll need to take it down and then start it again. To stop the beacon, you just write:
 
@@ -282,9 +282,9 @@ klyng --beacon-down
 
 ### Running on Remote Devices
 
-Once you have your remote devices ready, you'll need to prepare a ***machines files*** that lists the information about the devices you want to run your job across.
+Once you have your remote devices ready, you'll need to prepare a ***machines file*** that lists the information about the devices you want to run your job across.
 
-A machines file is a simple JSON file, each key is the IP adderess (or the host name if your hosts file or DNS can resolve it) of a remote machine you want to distribute part of your job to. The value of that key is an object that can possibly take three fields:
+A machines file is a simple JSON file where each key is the IP adderess (or the host name if your hosts file or DNS can resolve it) of a remote machine you want to distribute part of your job to. The value of that key is an object that can possibly take three fields:
 * `max_procs`: The maximum number of processes that you want to run on that machine. Klyng will attempt to respect that limit as far the environment allows[³](#foot-note3). If this field is missing, it defaults to infinity.
 
 * `port`: The port number this machine would be listening on. If it's missing, the default port number 2222 is assumed.
@@ -293,7 +293,7 @@ A machines file is a simple JSON file, each key is the IP adderess (or the host 
 
 If you wish to include the local machine in the job, you'll need to add another entry to the machines file keyed by `"local"` that takes an object value optionally containing the `max_procs` field.
 
-The following is an example of machines file to run a job across the local machine and two other machines on LAN:
+The following is an example of a machines file to run a job across the local machine and two other machines on LAN:
 
 ```javascript
 {
