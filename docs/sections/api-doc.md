@@ -60,4 +60,4 @@ If any of the fields of `criteria` is missing, klyng will wait for a message wit
 
 **Returns** *{Object}*: the contents of the `data` field in the received message.
 
-*Note*: While the execution is blocked waiting for a message, if a message that doesn't match the criteria of the current wait is received, this message will be queued for later use. Later, when another call to `klyng.recv` is made, it first checks that queue for the message it wants, if the message exist in the queue it will be immediately consumed, otherwise it'll block and wait.
+*Note*: While the execution is blocked waiting for a message, if a message that doesn't match the criteria of the current wait is received, this message will be queued for later use. Later, when another call to `klyng.recv` is made, it'll first check that queue for the message it wants, if the message exist in the queue it will be immediately consumed, otherwise `klyng.recv` will block and wait.
