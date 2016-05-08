@@ -1,13 +1,13 @@
 # API Documentation
 
 * [Environment Methods](#environment-methods)
-    * [klyng.init(app_main)](#klyng-init-app-main)
-    * [klyng.size()](#klyng-size)
-    * [klyng.rank()](#klyng-rank)
-    * [klyng.end()](#klyng-end)
-* [Communication Methods](#communication-methods)
-    * [klyng.send(message)](#klyng-send-message)
-    * [klyng.recv([criteria])](#klyng-recv-criteria)
+    * [klyng.init(app_main)](#klynginitapp-main)
+    * [klyng.size()](#klyngsize)
+    * [klyng.rank()](#klyngrank)
+    * [klyng.end()](#klyngend)
+* [Communication Methods](#communicationmethods)
+    * [klyng.send(message)](#klyngsendmessage)
+    * [klyng.recv([criteria])](#klyngrecvcriteria)
 
 ## Environment Methods
 
