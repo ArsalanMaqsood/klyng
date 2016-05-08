@@ -11,7 +11,7 @@
 2. [API Documentation](./sections/api-doc.md)
     1. [Environment Methods](./sections/api-doc.md#environment-methods)
     2. [Communication Methods](./sections/api-doc.md#communication-methods)
-3. CLI Documentation
+3. [CLI Documentation](./sections/cli-doc.md)
 4. Tests and Benchmarks
     1. Unit and Integration Tests
     2. Running the Benchmarks
