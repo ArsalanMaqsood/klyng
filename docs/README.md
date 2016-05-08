@@ -8,9 +8,9 @@
     5. [Running Locally](./sections/getting-started.md#running-locally)
     6. [Configuring your Device for Remote Jobs](./sections/getting-started.md#configuring-your-device-for-remote-jobs)
     5. [Running on Remote Devices](./sections/getting-started.md#running-on-remote-devices)
-2. API Documentation
-    1. Environment Methods
-    2. Communication Methods
+2. [API Documentation](./sections/api-doc.md)
+    1. [Environment Methods](./sections/api-doc.md#environment-methods)
+    2. [Communication Methods](./sections/api-doc.md#communication-methods)
 3. CLI Documentation
 4. Tests and Benchmarks
     1. Unit and Integration Tests
