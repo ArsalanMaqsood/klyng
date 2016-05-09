@@ -80,4 +80,4 @@ These data were collected on a machine with an Intel Core i5 2410M CPU @ 2.30GHz
 
 To make these data reproducible, the benchmarking script along with the source code for the tasks in question are shipped with the framework. The benchmarking script is also customizable for different environment parameters and extensible for more tasks.
 
-For more information on running the benchmarks, please refer to the documentations.
+For more information on running the benchmarks, please refer to the [documentations](./docs/sections/tests-benchmarks.md#benchmarks).
