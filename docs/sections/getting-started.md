@@ -133,7 +133,7 @@ function main() {
 
         // After the root has given each process its job, it's time to do its own
         // its portion the rest of the remaining data
-        var rootPortion = portion.slice((size - 1) * portionSize, 1000000);
+        var rootPortion = list.slice((size - 1) * portionSize, 1000000);
 
         var localSum = rootPortion.reduce((prev, next) => prev + next);
     }
@@ -211,7 +211,7 @@ function main() {
             klyng.send({to: p, data: portion});
         }
 
-        var rootPortion = portion.slice((size - 1) * portionSize, 1000000);
+        var rootPortion = list.slice((size - 1) * portionSize, 1000000);
 
         var localSum = rootPortion.reduce((prev, next) => prev + next);
 
