@@ -81,3 +81,29 @@ These data were collected on a machine with an Intel Core i5 2410M CPU @ 2.30GHz
 To make these data reproducible, the benchmarking script along with the source code for the tasks in question are shipped with the framework. The benchmarking script is also customizable for different environment parameters and extensible for more tasks.
 
 For more information on running the benchmarks, please refer to the [documentations](./docs/sections/tests-benchmarks.md#benchmarks).
+
+# Relation to MPI Standards
+
+The project was originally motivated by MPI, so it's greatly influenced by the MPI standards, and the standards was used more than one time as a reference in the implementations of some aspects of the project. However, the project in its current state cannot be considered as an implementation of the MPI standards; it can be considered, for now, as a *weak implementation of the MPI standards*.
+
+# Dive In!
+
+1. [Getting Started](./docs/sections/getting-started.md)
+    1. [Installation](./docs/sections/getting-started.md#installation)
+    2. [Program Structure](./docs/sections/getting-started.md#program-structure)
+    3. [Dividing the Job](./docs/sections/getting-started.md#dividing-the-job)
+    4. [Sending and Receiving Messages](./docs/sections/getting-started.md#sending-and-receiving-messages)
+    5. [Running Locally](./docs/sections/getting-started.md#running-locally)
+    6. [Configuring your Device for Remote Jobs](./docs/sections/getting-started.md#configuring-your-device-for-remote-jobs)
+    5. [Running on Remote Devices](./docs/sections/getting-started.md#running-on-remote-devices)
+2. [API Documentation](./docs/sections/api-doc.md)
+    1. [Environment Methods](./docs/sections/api-doc.md#environment-methods)
+    2. [Communication Methods](./docs/sections/api-doc.md#communication-methods)
+3. [CLI Documentation](./docs/sections/cli-doc.md)
+4. [Tests and Benchmarks](./docs/sections/tests-benchmarks.md)
+    1. [Unit and Integration Tests](./docs/sections/tests-benchmarks.md#unit-and-integration-tests)
+    2. [Benchmarks](./docs/sections/tests-benchmarks.md#benchmarks)
+
+# License
+
+### MIT
