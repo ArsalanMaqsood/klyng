@@ -1,5 +1,5 @@
 <p align='center'>
-<img src='https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/klyng-logo.png' alt='klyng'>
+<img src='https://drive.google.com/uc?export=view&id=0BwJ57iK3uPsVV3paZnVHTGp5blU' alt='klyng'>
 </p>
 
 <p align='center'>
@@ -35,7 +35,7 @@ function main() {
 klyng.init(main);
 ```
 <p align='center'>
-    <img src='https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/dist-hello.gif' alt='Distributed Hello World'>
+    <img src='https://drive.google.com/uc?export=view&id=0BwJ57iK3uPsVUzdSbzh0RmIzdkk' alt='Distributed Hello World'>
 </p>
 
 # System Requirements
@@ -62,13 +62,13 @@ As the MPCT metric uses the actual time spent by an individual process on the CP
 
 Compared to MPICH2 with C/C++, the data shows that klyng and javascript scales with the number of processors just as well (and in some cases, even better).
 
-![Pi-MPCT](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-mpct.png)
+![Pi-MPCT](https://drive.google.com/uc?export=view&id=0BwJ57iK3uPsVNXBiUVB1SEE1VHc)
 
-![Primes-MPCT](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-mpct.png)
+![Primes-MPCT](https://drive.google.com/uc?export=view&id=0BwJ57iK3uPsVUGJTYWQ2Q2pZRzQ)
 
-![Pi-RTET](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/pi-rtet.png)
+![Pi-RTET](https://drive.google.com/uc?export=view&id=0BwJ57iK3uPsVTnBMLWd1Tmgwd0k)
 
-![Primes-RTET](https://googledrive.com/host/0BwJ57iK3uPsVUUkzRGJyZ0FEeTg/primes-rtet.png)
+![Primes-RTET](https://drive.google.com/uc?export=view&id=0BwJ57iK3uPsVcFVVVHBzNDI2bWM)
 
 The data represents how both MPICH2 and klyng scale with the number of processes on two computationally-intensive tasks:
 
