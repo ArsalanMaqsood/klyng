@@ -25,11 +25,11 @@ describe("Beacon Remote Communincation", function() {
 
     beforeEach(function() {
         if(!!ipc.of.auth_socket) {
-            ipc.of.auth_socket.off('AUTH:STATUS');
+            ipc.of.auth_socket.off('AUTH:STATUS', '*');
         }
 
         if(!!ipc.of.nauth_socket) {
-            ipc.of.nauth_socket.off('AUTH:STATUS');
+            ipc.of.nauth_socket.off('AUTH:STATUS', '*');
         }
     });
 
