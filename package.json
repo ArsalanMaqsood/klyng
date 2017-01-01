@@ -27,7 +27,7 @@
     "browserify": "^13.0.0",
     "command-line-args": "^2.1.4",
     "fibers": "^1.0.9",
-    "node-ipc": "https://github.com/Mostafa-Samir/node-ipc/tarball/production",
+    "node-ipc": "8.10.2",
     "zip-local": "^0.3.2"
   },
   "devDependencies": {
