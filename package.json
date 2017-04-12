@@ -1,6 +1,6 @@
 {
   "name": "klyng",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A message-passing distributed computing framework for node.js",
   "bin": "bin/main.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "browserify": "^13.0.0",
     "command-line-args": "^2.1.4",
     "fibers": "^1.0.9",
-    "node-ipc": "8.10.3",
+    "node-ipc": "https://github.com/RIAEvangelist/node-ipc/tarball/master",
     "zip-local": "^0.3.2"
   },
   "devDependencies": {
